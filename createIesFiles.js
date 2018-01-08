@@ -3,8 +3,6 @@ const Path = require('path');
 const lineReader = require('readline');
 
 const lengths = ['2','3','4'];
-// const colors = ['927','930','935','940','950','830','835','840','850'];
-// const outputs = ['LO','MO','HO','VHO'];
 
 function buildTree() {
   fs.readdir('./', (err, entries) => {
@@ -24,8 +22,7 @@ function buildTree() {
       //loops through all IES files in current directory
       entries.forEach((file) => {
         const path = Path.join('./', file);
-
-        if (file.match(/\.IES$/) && originalFileCheck(path)) {
+        if (file.match(/\.IES$/) && originalFileCheck(path) && refPath.split('.')[0] === path.split('-')[0]) {
           processFile(refPath,path);
         }
       });
@@ -50,14 +47,16 @@ function processFile(refPath,path) {
     fs.mkdirSync(outputDir);
   }
 
-  const originalText = fs.readFileSync(path, 'utf8');
+  const originalText = fs.readFileSync(path, 'utf8').split(/\r?\n/);
   const originalFileName = path.split('-');
 
-  const newData = processCSV(refPath,originalFileName[1]);
+  console.log(originalFileName);
+  if (originalFileName[0] === 'EV3D') {
+    originalFileName.splice(2,0,'N')
+  }
 
-  const originalColor = originalFileName[2].substring(0,3);
-  const originalOutput = originalFileName[2].substring(3);
-  const originalLength = originalFileName[3];
+  const shieldIndex = originalFileName[0] === "EX3I" ? 2 : 1;
+  const newData = processCSV(refPath,originalFileName[shieldIndex]);
 
   const originalData = {
     'absLumen': '',
@@ -65,12 +64,20 @@ function processFile(refPath,path) {
     'wattageData': []
   }
 
-  originalText.split(/\r?\n/).forEach((line, index) => {
-    if (index === 21) {
+  var indexTrace;
+  originalText.forEach((line, index) => {
+    if (line.includes('_INPUT_ELECTRICAL')) {
+      originalText.splice(index, 1)
+      var removeInd = index
+      while (!originalText[removeInd].includes('[OTHER]')) {
+        originalText.splice(removeInd, 1);
+     }
+    } else if (line.includes('[_ABSOLUTELUMENS]')) {
+      indexTrace = index;
       originalData.absLumen = line.split(']')[1];
-    } else if (index === 23) {
+    } else if (index === indexTrace + 2) {
       originalData.fixtureData = line;
-    } else if (index === 24) {
+    } else if (index === indexTrace + 3) {
       originalData.wattageData = line;
     }
   });
@@ -79,47 +86,41 @@ function processFile(refPath,path) {
 
   Object.keys(newData).forEach((color) => {
 
-    var newText = originalText.replace('[TEST]ITL','[TEST]SCALED FROM ITL').replace('[_ABSOLUTELUMENS]','[OTHER]NOTE THIS TEST FILE HAS MULTIPLIER AND/OR WATTAGE ADJUSTMENTS APPLIED FOR CCT, OPTIC OR OUTPUT OPTIONS\n[OTHER]CCT ADJUSTMENT BASED ON OSRAM  DATA - CONTACT PINNACLE FACTORY FOR MORE INFORMATION\n[_ABSOLUTELUMENS]');
-
-    var newFixtureData = originalData.fixtureData.split(' ');
-    var newWattageData = originalData.wattageData.split(' ');
-
-    var newFile = path.split('-');
-    newFile[2] = color;
-
-    newFixtureData[2] = (newData[color][0] * Number(originalLength)) / Number(originalData.absLumen);
-    var colorMult = newFixtureData[2];
-    newWattageData[2] = (newData[color][1] * Number(originalLength)).toFixed(1);
-
-    newText = newText.replace(originalFileName[2], newFile[2]).replace(originalData.fixtureData, newFixtureData.join(' ')).replace(originalData.wattageData, newWattageData.join(' '));
-
     lengths.forEach((length) => {
-      var prevLength = newFile[3];
-      var prevFixData = newFixtureData.join(' ');
-      var prevWattData = newWattageData.join(' ');
 
-      newFile[3] = length;
+      var newFixtureData = originalData.fixtureData.split(' ');
+      var newWattageData = originalData.wattageData.split(' ');
 
-      newFixtureData[2] = (colorMult * (Number(length) / Number(originalLength))).toFixed(5);
+      newFixtureData[2] = ((newData[color][0] * Number(length)) / Number(originalData.absLumen)).toFixed(5);
 
       newWattageData[2] = (newData[color][1] * Number(length)).toFixed(1);
 
-      lengthModifier(newFixtureData, prevLength, length);
+      lengthModifier(newFixtureData, originalFileName[originalFileName.length - 1], length);
 
-      newText = newText.replace(newFile[2] + '-' + prevLength, newFile[2] + '-' + newFile[3]).replace(prevFixData, newFixtureData.join(' ')).replace(prevWattData, newWattageData.join(' '));
+      var oldFile = [originalFileName[0],originalFileName[1],originalFileName[originalFileName.length - 2],originalFileName[originalFileName.length - 1].split('.')[0]]
+      var newFile = [oldFile[0], originalFileName[1], color, length];
 
-      var newLengthFile = newFile.join('-')
-      fs.writeFile(outputDir + '/' + newLengthFile, newText);
+      if (originalFileName[0] !== 'EV3D') {
+        oldFile.splice(2,0,originalFileName[2])
+        newFile.splice(2,0,originalFileName[2])
+      }
+
+      var newText = originalText.join('\r\n')
+        .replace('[TEST]ITL','[TEST]SCALED FROM ITL')
+        .replace('-GONIOPHOTOMETRY','')
+        .replace(oldFile.join('-'), newFile.join('-'))
+        .replace('[_ABSOLUTELUMENS]','[OTHER]NOTE THIS TEST FILE HAS MULTIPLIER AND/OR WATTAGE ADJUSTMENTS APPLIED FOR CCT, OPTIC OR OUTPUT OPTIONS - CONTACT PINNACLE FACTORY FOR MORE INFORMATION\r\n[_ABSOLUTELUMENS]')
+        .replace(originalData.fixtureData, newFixtureData.join(' '))
+        .replace(originalData.wattageData, newWattageData.join(' '));
+
+      var newFileName = newFile.join('-') + '.IES';
+      fs.writeFile(outputDir + '/' + newFileName, newText);
       totalOutputCount++;
     })
   })
 
   console.log('Total output files: ',totalOutputCount);
 }
-
-// function newProperty(newParam, originalParam) {
-//   return newParam !== originalParam
-// }
 
 function lengthModifier(fixArray,origL,newL) {
   var largestDim = fixArray.length - 3;
@@ -128,8 +129,8 @@ function lengthModifier(fixArray,origL,newL) {
       largestDim = i;
     }
   }
-  var diff = Number(origL) - Number(newL);
-  return fixArray[largestDim] = parseFloat(fixArray[largestDim]).toFixed(2) - diff;
+  var diff = Number(origL.split('.')[0]) - Number(newL);
+  return fixArray[largestDim] = (Number(fixArray[largestDim]) - diff).toFixed(2);
 }
 
 function processCSV(csvPath, shield) {
