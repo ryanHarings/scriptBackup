@@ -1,6 +1,5 @@
 const fs = require('fs');
 const Path = require('path');
-const lineReader = require('readline');
 
 const lengths = ['2','3','4'];
 
