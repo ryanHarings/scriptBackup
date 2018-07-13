@@ -26,7 +26,7 @@ function buildTree() {
     //loops through all IES files in current directory
     entries.forEach((file) => {
       const path = Path.join('./', file);
-      if (file.match(/\.IES$/) && originalFileCheck(path) && path.split('-')[0] === 'EX3D') {
+      if ((file.match(/\.IES$/) || file.match(/\.ies$/)) && originalFileCheck(path) && path.split('-')[0] === 'EX3D') {
         processFile(refPath,refIndPath,path,indirect);
       }
     });
@@ -94,6 +94,10 @@ function processFile(refPath,refIndPath,path,indPaths) {
       originalData.wattageData = line;
     } else if (index === indexTrace + 2) {
       originalData.endAngles = line;
+      while (originalText[index + 1].split(' ')[0] === '') {
+        // originalData.endAngles += originalText[index + 1];
+        originalText.splice(index + 1, 1)
+      } 
     } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 5 || line.split(' ').length === 16)) {
       originalData.candelaData.splice(0, originalData.candelaData.length);
       originalData.deleteLines.splice(0, originalData.deleteLines.length);
@@ -103,10 +107,6 @@ function processFile(refPath,refIndPath,path,indPaths) {
       originalData.deleteLines.push(index)
     }
   });
-  // accounts for lost lumens when lens is proud, hopefully
-  if (originalFileName.includes('HED') || originalFileName.includes('AL')) {
-    originalData.absLumen = Number(originalData.absLumen) * .98;
-  }
   // removes candela data
   originalText.splice(originalData.deleteLines[0], originalData.deleteLines.length)
   // removes extraneous angle data lines
@@ -157,17 +157,14 @@ function processFile(refPath,refIndPath,path,indPaths) {
         indData.candelaData.push(line);
       }
     });
-    // accounts for lost lumens when lens is proud, hopefully
-    if (indFileName.includes('HEA')) {
-      indData.absLumen = Number(indData.absLumen) * 0.98;
-    }
+    
     // combines/replaces fixture data to establish combined base file content
     var combFixtureData = originalData.fixtureData.split(' ');
     // diode qty
-    combFixtureData[0] = Number(combFixtureData[0]) * 2;
+    combFixtureData[0] = Number(combFixtureData[0]) + Number(indData.fixtureData.split(' ')[0]);
     // vertical angle qty
-    combFixtureData[3] = Number(combFixtureData[3]) * 2 - 1;
-    // overall file multiplier
+    combFixtureData[3] = '73';
+    // top angle qty
     combFixtureData[4] = Number(combFixtureData[4]) < Number(indData.fixtureData.split(' ')[4]) ? Number(indData.fixtureData.split(' ')[4]) : Number(combFixtureData[4]);
     // sets z axis IF applicable
     combFixtureData[9] = Number(originalData.fixtureData.split(' ')[9]) > 0 ? originalData.fixtureData.split(' ')[9] : indData.fixtureData.split(' ')[9]
@@ -198,10 +195,16 @@ function processFile(refPath,refIndPath,path,indPaths) {
             // copies variables to avoid base file modification
             var newFixtureData = combFixtureData.join(' ').split( ' ');
             var newWattageData = originalData.wattageData.split( ' ');
+            // calculates proud lens abs lumens differential 
+            var dropLensDirDif = originalFileName.includes('AL') ? 0.138547 * Number(originalData.absLumen) : originalFileName.includes('HED') ? 0.02 * Number(originalData.absLumen) : 0;
+            var dropLensIndDif = originalFileName.includes('AL') ? 0.147447 * Number(indData.absLumen) : originalFileName.includes('HED') ? 0.02 * Number(originalData.absLumen) : 0;
+            var raisedLensDif = originalFileName.includes('HEA') ? 0.02 * Number(indData.absLumen) : 0;
             // calculates ratio of direct output to direct abs lumens, normalizer later applied to all indirect data for use in overall file multiplier (IES toolbox)
-            var indNormalizer = (Number(originalData.absLumen) * (newIndData[indColor][0] * Number(length)) / (newData[color][0] * Number(length))) / Number(indData.absLumen);
+            var indNormalizer = ((Number(originalData.absLumen) - dropLensDirDif + raisedLensDif) * (newIndData[indColor][0] * Number(length)) / (newData[color][0] * Number(length))) / (Number(indData.absLumen) + dropLensIndDif - raisedLensDif);
             // calculates configuration specific normalized indirect abs lumens to direct abs lumens per above
-            var combAbsLumens = (Number(originalData.absLumen) + Number(indData.absLumen) * indNormalizer).toFixed(0);
+            
+            var combAbsLumens = ((Number(originalData.absLumen) - dropLensDirDif + raisedLensDif) + ((Number(indData.absLumen) + dropLensIndDif - raisedLensDif) * indNormalizer));
+         
             // calculates configuration specific overall file multiplier (IES toolbox) and sets in variable
             newFixtureData[2] = ((newData[color][0] * Number(length) + newIndData[indColor][0] * Number(length)) / combAbsLumens).toFixed(5);
             // calculates configuration specific total wattage and sets in variable
@@ -215,7 +218,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
             } else {
               newFixtureData[dimsArray[0]] = (Number(combFixtureData[dimsArray[0]]) - dimsArray[2]).toFixed(2);
             }
-            // callback function to combine the direct and indirect candela data, all normalizers applied
+            // helper function to combine the direct and indirect candela data, all normalizers applied
             var combCandelaData = candelaCombiner(originalData.candelaData, indData.candelaData, indNormalizer);
             // sets base combined file name to be replaced on each config
             var oldFile = ['EX3DI',originalFileName[1],indFileName[2],originalFileName[3],indFileName[3],originalFileName[4].split('.')[0]]
@@ -224,11 +227,19 @@ function processFile(refPath,refIndPath,path,indPaths) {
             // configuration specific file content replacement
             var newText = combinedText
               .replace(oldFile.join('-'), newFile.join('-'))
-              .replace('[_ABSOLUTELUMENS]' + originalData.absLumen,'[_ABSOLUTELUMENS]' + combAbsLumens)
+              .replace('[_ABSOLUTELUMENS]' + originalData.absLumen,'[_ABSOLUTELUMENS]' + combAbsLumens.toFixed(0))
               .replace(combFixtureData.join(' '), newFixtureData.join(' '))
               .replace(originalData.wattageData, newWattageData.join(' '))
             // adds file extension to combined file name
             var newFileName = newFile.join('-') + '.IES';
+            // if (newFileName === "EX3DI-AL-BW-835HO-835-4.IES") {
+            //   console.log(dropLensDirDif, 'drop dir lens difference')
+            //   console.log(dropLensIndDif, 'drop ind lens difference')
+            //   console.log(indNormalizer, 'indirect normalizer')
+            //   console.log(combAbsLumens, 'combined abs lumens normed')
+            //   console.log(Number(originalData.absLumen) - dropLensDirDif, 'dir abs lumens minus dif')
+            //   console.log(Number(indData.absLumen) + dropLensIndDif, 'ind abs lumens plus dif')
+            // }
             // writes each file with content to output dir (if colors match per above)
             fs.writeFile(outputDir + '/' + newFileName, newText + combCandelaData);
           })
@@ -275,34 +286,66 @@ function processCSV(csvPath, shield) {
 // function for combining direct and indirect candela data
 function candelaCombiner(dirArr,indArr,norm) {
   // cleans up the lines to remove extraneous spaces and newlines, then removes inverse hemisphere in proud lens applications
-  var directC = fixLines(dirArr).map(dLine => {
-    return removeInvHem(dLine)
-  });
-  var indirectC = fixLines(indArr).map(iLine => {
-    return removeInvHem(iLine)
-  });
+  // var directC = fixLines(dirArr).map(dLine => {
+  //   return removeInvHem(dLine)
+  // });
+  // var indirectC = fixLines(indArr).map(iLine => {
+  //   return removeInvHem(iLine)
+  // });
+  var directC = fixLines(dirArr);
+  var indirectC = fixLines(indArr);
   // applies normalizer to indirect candela so the complete file can be scaled uniformly
-  var normInd = []
-  indirectC.forEach(line => {
-    normInd.push(
-      line.split(' ').map(val => {
-        if (Number(val) !== 0) {
-          return (Number(val) * norm).toFixed(0)
-        }
-      }).join(' ')
-    )
-  });
+  // var normInd = []
+  // indirectC.forEach(line => {
+  //   normInd.push(
+  //     line.split(' ').map(val => {
+  //       if (Number(val) !== 0) {
+  //         return (Number(val) * norm).toFixed(0)
+  //       }
+  //     }).join(' ')
+  //   )
+  // });
   // ensures the same number of angle measurements exist by configuration
-  if (directC.length < normInd.length) {
+  if (directC.length < indirectC.length) {
     directC = normalizeAngleQty(directC.reverse());
-  } else if (normInd.length < directC.length) {
-    normInd = normalizeAngleQty(normInd.reverse());
+  } else if (indirectC.length < directC.length) {
+    indirectC = normalizeAngleQty(indirectC.reverse());
   }
   // combines the processed candela data
   var comb = []
   for (var i = 0; i < directC.length; i++) {
-    if (directC[i] !== undefined && normInd[i] !== undefined)
-    comb.push( directC[i] + normInd[i] )
+    if (directC[i] !== undefined && indirectC[i] !== undefined) {
+      let splitD = directC[i].split(' ');
+      let splitI = indirectC[i].split(' ');
+      if (splitD.length - splitI.length === 0) {
+        if (splitD.length === 37) {
+          comb.push( directC[i] + indirectC[i] )
+        } else {
+          splitD.forEach((num,ind) => {
+            var indNorm = ind < 36 ? 1 : norm;
+            splitD[ind] = (Number(num) + Number(splitI[ind])) * indNorm
+          })
+          comb.push(splitD)
+        }
+      } else {
+        var hemi;
+        for (var j = 0; j < 37; j++) {
+          if (splitD.length === 73) {
+            if (j === 0) {
+              splitD[j + 36] = (Number(splitD[j + 36]) + Number(splitI[j]))
+            } else {
+              splitD[j + 36] = ((Number(splitD[j + 36]) + Number(splitI[j])) * norm).toFixed(0)
+            }
+            hemi = "D"
+          } else {
+            splitI[j] = Number(splitD[j]) + Number(splitI[j])
+            splitI[j + 36] = Number(splitI[j]) * norm
+            hemi = "I"
+          }
+        }
+        comb.push(eval("split" + hemi))
+      }
+    }
   }
   return comb.join('\r\n')
 }

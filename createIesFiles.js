@@ -2,6 +2,7 @@ const fs = require('fs');
 const Path = require('path');
 
 const lengths = ['2','3','4'];
+// const lengths = ['4'];
 
 function buildTree() {
   fs.readdir('./', (err, entries) => {
@@ -21,7 +22,7 @@ function buildTree() {
       //loops through all IES files in current directory
       entries.forEach((file) => {
         const path = Path.join('./', file);
-        if (file.match(/\.IES$/) && originalFileCheck(path) && refPath.split('.')[0] === path.split('-')[0]) {
+        if ((file.match(/\.IES$/) || file.match(/\.ies$/)) && originalFileCheck(path) && refPath.split('.')[0] === path.split('-')[0]) {
           processFile(refPath,path);
         }
       });
@@ -39,7 +40,7 @@ function originalFileCheck(path) {
 
 //process each original file
 function processFile(refPath,path) {
-  console.log(path);
+  console.log(path); 
 
   var outputDir = './output';
   if (!fs.existsSync(outputDir)){
@@ -47,15 +48,22 @@ function processFile(refPath,path) {
   }
 
   const originalText = fs.readFileSync(path, 'utf8').split(/\r?\n/);
-  const originalFileName = path.split('-');
+  const originalFileName = path.split('.')[0].split('-');
 
-  console.log(originalFileName);
-  if (originalFileName[0] === 'EV3D') {
-    originalFileName.splice(2,0,'N')
+  // if (originalFileName[0] === 'EV3D' || originalFileName[0] === 'EV3D') {
+  //   originalFileName.splice(2,0,'N')
+  // }
+
+  // const shieldIndex = originalFileName[0] === "EX3I" ? 2 : 1;
+  var shieldVal = 'A';
+
+  if (originalFileName[1] === 'N') {
+    shieldVal = originalFileName[2]
+  } else if (originalFileName[2] === 'N' || originalFileName[2].length > 1) {
+    shieldVal = originalFileName[1]
   }
 
-  const shieldIndex = originalFileName[0] === "EX3I" ? 2 : 1;
-  const newData = processCSV(refPath,originalFileName[shieldIndex]);
+  const newData = processCSV(refPath,shieldVal);
 
   const originalData = {
     'absLumen': '',
@@ -84,7 +92,6 @@ function processFile(refPath,path) {
   var totalOutputCount = 0;
 
   Object.keys(newData).forEach((color) => {
-
     lengths.forEach((length) => {
 
       var newFixtureData = originalData.fixtureData.split(' ');
@@ -96,13 +103,27 @@ function processFile(refPath,path) {
 
       lengthModifier(newFixtureData, originalFileName[originalFileName.length - 1], length);
 
-      var oldFile = [originalFileName[0],originalFileName[1],originalFileName[originalFileName.length - 2],originalFileName[originalFileName.length - 1].split('.')[0]]
-      var newFile = [oldFile[0], originalFileName[1], color, length];
+      // var oldFile = [originalFileName[0],originalFileName[1],originalFileName[originalFileName.length - 2],originalFileName[originalFileName.length - 1].split('.')[0]]
+      // var newFile = [oldFile[0], originalFileName[1], color, length];
 
-      if (originalFileName[0] !== 'EV3D') {
-        oldFile.splice(2,0,originalFileName[2])
-        newFile.splice(2,0,originalFileName[2])
-      }
+      var oldFile = originalFileName.filter((val,ind) => {
+        return val !== undefined
+      })
+
+      var newFile = oldFile.map((val,ind) => {
+        if (ind === oldFile.length - 2) {
+          return color
+        } else if (ind === oldFile.length - 1) {
+          return length
+        } else {
+          return val
+        }
+      });
+
+      // if (originalFileName[0] !== 'EV3D' || originalFileName[0] !== 'T4A') {
+      //   oldFile.splice(2,0,originalFileName[2])
+      //   newFile.splice(2,0,originalFileName[2])
+      // }
 
       var newText = originalText.join('\r\n')
         .replace('[TEST]ITL','[TEST]SCALED FROM ITL')
@@ -145,8 +166,13 @@ function processCSV(csvPath, shield) {
       if (splitLine[shieldIndex] !== 'N/A') {
         var color = splitLine[0];
         outputObject[color] = [];
-        outputObject[color].push(Number(splitLine[1]));
-        outputObject[color].push(Number(splitLine[shieldIndex + 1]));
+        if (Number(splitLine[1]) > Number(splitLine[shieldIndex])) {
+          outputObject[color].push(Number(splitLine[1]));
+          outputObject[color].push(Number(splitLine[shieldIndex]));
+        } else {
+          outputObject[color].push(Number(splitLine[shieldIndex]));
+          outputObject[color].push(Number(splitLine[1]));
+        }
       }
     }
   })
