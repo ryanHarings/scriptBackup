@@ -13,20 +13,21 @@ function buildTree() {
 
     entries.forEach((refFile) => {
       const path = Path.join('./', refFile);
-      if (path.match(/\.csv$/) && path.match(/EX3D/)) {
+      if (path.match(/\.csv$/) && (path.match(/EX3D/) || path.match(/EX1.csv/))) {
         refPath = path;
-      } else if (path.match(/\.csv$/) && path.match(/EX3I/)) {
+      } else if (path.match(/\.csv$/) && (path.match(/EX3I/) || path.match(/EX12N.csv/))) {
         refIndPath = path;
-      } else if (path.match(/\.IES$/) && originalFileCheck(path) && path.split('-')[0] === 'EX3I') {
+      } else if ((path.match(/\.IES$/) || path.match(/\.ies$/)) && originalFileCheck(path) && (path.split('-')[0] === 'EX3I' || path.split('-')[0] === 'EX12')) {
         indirect.push(path)
       }
     });
+
     console.log('Reference files:');
     console.log(refPath, refIndPath);
     //loops through all IES files in current directory
     entries.forEach((file) => {
       const path = Path.join('./', file);
-      if ((file.match(/\.IES$/) || file.match(/\.ies$/)) && originalFileCheck(path) && path.split('-')[0] === 'EX3D') {
+      if ((file.match(/\.IES$/) || file.match(/\.ies$/)) && originalFileCheck(path) && (path.split('-')[0] === 'EX3D' || path.split('-')[0] === 'EX1')) {
         processFile(refPath,refIndPath,path,indirect);
       }
     });
@@ -51,7 +52,8 @@ function processFile(refPath,refIndPath,path,indPaths) {
     fs.mkdirSync(outputDir);
   }
   // set direct file content and chop up file name
-  const originalText = fs.readFileSync(path, 'utf8').replace('EX3D','EX3DI').split(/\r?\n/);
+  const originalText = path.split('-')[0] === 'EX3D' ? fs.readFileSync(path, 'utf8').replace('EX3D','EX3DI').split(/\r?\n/) : fs.readFileSync(path, 'utf8').replace('EX1','EX1B').split(/\r?\n/);
+
   const originalFileName = path.split('-');
   // select appropriate direct output data per shielding
   const newData = processCSV(refPath,originalFileName[1]);
@@ -200,13 +202,25 @@ function processFile(refPath,refIndPath,path,indPaths) {
             var dropLensIndDif = originalFileName.includes('AL') ? 0.147447 * Number(indData.absLumen) : originalFileName.includes('HED') ? 0.02 * Number(originalData.absLumen) : 0;
             var raisedLensDif = originalFileName.includes('HEA') ? 0.02 * Number(indData.absLumen) : 0;
             // calculates ratio of direct output to direct abs lumens, normalizer later applied to all indirect data for use in overall file multiplier (IES toolbox)
-            var indNormalizer = ((Number(originalData.absLumen) - dropLensDirDif + raisedLensDif) * (newIndData[indColor][0] * Number(length)) / (newData[color][0] * Number(length))) / (Number(indData.absLumen) + dropLensIndDif - raisedLensDif);
+            var indNormalizer
+            if (path.split('-')[0] === "EX3D") {
+              indNormalizer = ((Number(originalData.absLumen) - dropLensDirDif + raisedLensDif) * (newIndData[indColor][0] * Number(length)) / (newData[color][0] * Number(length))) / (Number(indData.absLumen) + dropLensIndDif - raisedLensDif);
+              // indNormalizer = ((originalData.absLumen * newIndData[indColor][0] * length) / (newData[color][0] * length)) / indData.absLumen;
+            } else {
+              indNormalizer = color === indColor ? 1 : color.length > indColor.length ? newIndData[indFileName[3].substring(0,3)][0] / newIndData[indFileName[3]][0] : newIndData[indFileName[3]][0] / newIndData[indFileName[3].substring(0,3)][0]
+              // indNormalizer = color === indColor ? 1 : color.length > indColor.length ? newData[originalFileName[3].substring(0,3)][0] / newData[originalFileName[3]][0] : newIndData[indFileName[3]][0] / newIndData[indFileName[3].substring(0,3)][0]
+              // indNormalizer = color === indColor ? 1 : color.length > indColor.length ? newIndData[color][0] / newIndData[indColor][0] : newIndData[indColor][0] / newIndData[color][0]
+              // indNormalizer = color === indColor ? 1 : color.length > indColor.length ? newData[indColor][0] / newData[color][0] : newIndData[indColor][0] / newIndData[color][0]
+              // indNormalizer = color === indColor ? 1 : color.length > indColor.length ? newIndData[color][0] / newIndData[indFileName[3]][0] : newIndData[indFileName[3]][0] / newIndData[color][0]
+              // indNormalizer = color === indColor ? 1 : color.length > indColor.length ? newIndData[indFileName[3].substring(0,3)][0] / newIndData[color][0] : newIndData[color][0] / newIndData[indFileName[3].substring(0,3)][0]
+              // console.log(indNormalizer)
+            } 
             // calculates configuration specific normalized indirect abs lumens to direct abs lumens per above
             
-            var combAbsLumens = ((Number(originalData.absLumen) - dropLensDirDif + raisedLensDif) + ((Number(indData.absLumen) + dropLensIndDif - raisedLensDif) * indNormalizer));
-         
+            // var combAbsLumens = ((Number(originalData.absLumen) - dropLensDirDif + raisedLensDif) + ((Number(indData.absLumen) + dropLensIndDif - raisedLensDif) * indNormalizer));
+            var combAbsLumens = newData[color][0] * Number(length) + newIndData[indColor][0] * Number(length)
             // calculates configuration specific overall file multiplier (IES toolbox) and sets in variable
-            newFixtureData[2] = ((newData[color][0] * Number(length) + newIndData[indColor][0] * Number(length)) / combAbsLumens).toFixed(5);
+            newFixtureData[2] = ((newData[color][0] * Number(length) + newIndData[indColor][0] * Number(length)) / (Number(originalData.absLumen) + Number(indData.absLumen) * indNormalizer)).toFixed(5);
             // calculates configuration specific total wattage and sets in variable
             newWattageData[2] = (newData[color][1] * Number(length) + newIndData[indColor][1] * Number(length)).toFixed(1);
             // notes length and width dim location and delta of base files to config length
@@ -221,9 +235,10 @@ function processFile(refPath,refIndPath,path,indPaths) {
             // helper function to combine the direct and indirect candela data, all normalizers applied
             var combCandelaData = candelaCombiner(originalData.candelaData, indData.candelaData, indNormalizer);
             // sets base combined file name to be replaced on each config
-            var oldFile = ['EX3DI',originalFileName[1],indFileName[2],originalFileName[3],indFileName[3],originalFileName[4].split('.')[0]]
+            var biFileName = path.split('-')[0] === 'EX3D' ? 'EX3DI' : 'EX1B';
+            var oldFile = [biFileName,originalFileName[1],indFileName[2],originalFileName[3],indFileName[3],originalFileName[4].split('.')[0]]
             // creates new combined file name
-            var newFile = ['EX3DI', oldFile[1], oldFile[2], color, indColor, length];
+            var newFile = [biFileName,oldFile[1],oldFile[2],color,indColor,length];
             // configuration specific file content replacement
             var newText = combinedText
               .replace(oldFile.join('-'), newFile.join('-'))
@@ -232,6 +247,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
               .replace(originalData.wattageData, newWattageData.join(' '))
             // adds file extension to combined file name
             var newFileName = newFile.join('-') + '.IES';
+            // console.log(newFileName)
             // if (newFileName === "EX3DI-AL-BW-835HO-835-4.IES") {
             //   console.log(dropLensDirDif, 'drop dir lens difference')
             //   console.log(dropLensIndDif, 'drop ind lens difference')
@@ -241,7 +257,10 @@ function processFile(refPath,refIndPath,path,indPaths) {
             //   console.log(Number(indData.absLumen) + dropLensIndDif, 'ind abs lumens plus dif')
             // }
             // writes each file with content to output dir (if colors match per above)
-            fs.writeFile(outputDir + '/' + newFileName, newText + combCandelaData);
+            console.log(newFileName.includes('WHE'))
+            if ((color === indColor || length === '4') && (newFileName.includes('WHE')===false && newFileName.includes('HEA')===false)) {
+              fs.writeFile(outputDir + '/' + newFileName, newText + combCandelaData);
+            }
           })
         }
       })
@@ -263,8 +282,7 @@ function lengthModifier(fixArray,origL,newL) {
 
 // function for selecting shielding specific output data
 function processCSV(csvPath, shield) {
-  var outputObject = {
-  };
+  var outputObject = {};
   var csvParse = fs.readFileSync(csvPath, 'utf8');
   var shieldIndex;
   csvParse.split(/\r?\n/).forEach((line,index) => {
@@ -275,8 +293,13 @@ function processCSV(csvPath, shield) {
       if (splitLine[shieldIndex] !== 'N/A') {
         var color = splitLine[0];
         outputObject[color] = [];
-        outputObject[color].push(Number(splitLine[1]));
-        outputObject[color].push(Number(splitLine[shieldIndex + 1]));
+        if (Number(splitLine[1]) > Number(splitLine[shieldIndex])) {
+          outputObject[color].push(Number(splitLine[1]));
+          outputObject[color].push(Number(splitLine[shieldIndex]));
+        } else {
+          outputObject[color].push(Number(splitLine[shieldIndex]));
+          outputObject[color].push(Number(splitLine[1]));
+        }
       }
     }
   })
@@ -319,7 +342,10 @@ function candelaCombiner(dirArr,indArr,norm) {
       let splitI = indirectC[i].split(' ');
       if (splitD.length - splitI.length === 0) {
         if (splitD.length === 37) {
-          comb.push( directC[i] + indirectC[i] )
+          for (var j=0; j<37; j++) {
+            splitI[j] = (Number(splitI[j]) * norm).toFixed(0)
+          }
+          comb.push(directC[i] + splitI.join(' '))
         } else {
           splitD.forEach((num,ind) => {
             var indNorm = ind < 36 ? 1 : norm;
@@ -331,6 +357,7 @@ function candelaCombiner(dirArr,indArr,norm) {
         var hemi;
         for (var j = 0; j < 37; j++) {
           if (splitD.length === 73) {
+            // console.log('not here')
             if (j === 0) {
               splitD[j + 36] = (Number(splitD[j + 36]) + Number(splitI[j]))
             } else {
@@ -338,6 +365,7 @@ function candelaCombiner(dirArr,indArr,norm) {
             }
             hemi = "D"
           } else {
+            // console.log('here')
             splitI[j] = Number(splitD[j]) + Number(splitI[j])
             splitI[j + 36] = Number(splitI[j]) * norm
             hemi = "I"

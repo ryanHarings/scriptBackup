@@ -1,0 +1,70 @@
+Mom:
+________________________
+
+Histrionic,Compulsive,Borderline,Schizotypal,Negativistic,Paranoid,Healthy,Sadistic,Masochistic,Narcissistic ,Avoidant,Dependent Mother,Depressive,Schizoid
+________________________
+
+Histrionic: 16/26 -- 54-showers me with praise when I performed well.,69-usually makes me feel like her/his �little girl/boy�.,128-loves to see me �all dressed up� when I was young.,135-frequently make me the center of attention.,141-think I�d �be a star someday�.,148-is proud of me because I am so pretty/handsome.,153-is very dramatic.,6-often cuddles and comfortes me when I cry.,14-is over over-reactive and over-emotional.,*3-is strict and raised me right. (F),57-shows me I could easily manipulate their moods.,91-tend to praise me all the time,122-typically attends my school functions.,*133-discourages me from expressing myself.  (F),152-generally praised me for my successes.,161-is generally comfortable with personal affection and closeness.
+
+Compulsive: 6/19 -- 4-overprotects me so much at times I felt like I was in jail.,32-doesn�t tolerate immaturity and irresponsibility.,*40-is relaxed and easy going in her/his parenting. (F),99-is very organized and highly scheduled.,106-has high standards of right and wrong.,104-often tries to control me.
+
+Borderline: 5/9 -- 14-is extremely over-reactive and overemotional.,110-has many mood swings and I didn�t know when she/he will be nice to me.,125-is unpredictable and usually made things very chaotic in my house.,147-divorced and I am very confused about my place in the world.,157-is very overprotective.
+
+Schizotypal: 2/8 -- 42-considers me the �black sheep� of the family.,158-at times rejected my thoughts and dreams.
+
+Negativistic: 7/10 -- 7-frequently opposes the other parent.,10-never gives me enough credit for the good things I do.,15-argues frequently and I worry that they would divorce.,*24-rarely broke promises they made to me. (False),37-gives me mixed messages � he/she would say one thing but do another.,80-blames me for things I didn�t do.,92-�s uneven behavior toward me often has me �tied in emotional knots.�
+
+Paranoid: 3/9 -- *58-always trusts me and believes in me. (False),65-allows me to learn from my mistakes.,104-often tries to control me.
+
+Healthy: 17/23 -- 2-encourages me to help others.,26-often encourages me to share my feelings with them.,48-appreciates my uniqueness without giving me special treatment.,49-enjoys doing family activities together.,50-is respectful with me even when I failed or had done something wrong.,56-is proud when I worked to the best of my ability even if I do not succeed.,64-allows me to select what I wanted to wear to school as long as it was clean.,65-allows me to learn from my mistakes.,67-responds with a reasonable consequence if I don�t do my fair share at home.,75-encourages and coaches me on new tasks without doing it for me.,85-teaches me to openly share my opinions without putting other people down.,109-teaches me that blaming others for how I feel is inappropriate.,118-encouraged me to participate in activities but asked before enrolling me.,121-is available to offer insights/advice when I asked for them.,132-regularly lets me do things for myself that I was capable of doing.,136-appreciates when I accepted responsibility for a mistake (without making me feel worse).,150-generally kept a routine going in our home.
+
+Sadistic: 7/10 -- 21-my mother and/or father frequently takes her/his problems out on me,23-my mother and/or father feels I am a difficult child to manage,53-my mother and/or father usually disciplines me harshly,57-my mother and/or father showed me that I could easily manipulate his/her mood,87-my mother and/or father usually makes me feel like I should be suspicious of him/her,104-my mother and/or father often tries to control me,*138-my mother and/or father was typically trustworthy (reverse coded)
+
+Masochistic: 6/21 -- 77-my mother and/or father frequently remind me of my past mistakes when I fail,78-my mother and/or father usually encourage me to do stuff on my own,79-my mother and/or father was inconsistent in his/her discipline towards me,14-my mother and/or father was often very critical of me,116-my mother and/or father sometimes rejects me and other times nurture me,158-my mother and/or father at times rejects my thoughts and dreams
+
+Narcissistic : 6/10 -- 54-my mother and/or father showers me with praise when I performed well,91-my mother mother and/or father tend to praise me all the time,135-my mother and/or father frequently make me the center of attention,137-my mother and/or father think I am God�s gift to Mankind.,141-my mother and/or father think I�d �be a star someday�,148-my mother and/or father is proud of me because I am so pretty/handsome
+
+Avoidant: 2/10 -- 45-will often ignore me when I ask questions.,77-frequently reminds me of my past mistakes when I failed.
+
+Dependent Mother: 6/13 -- 29-will often say ""Be careful"" or ""Hold my hand."" . .",84-will often drop what he/she was doing to get me what I want. . .,114-tended to not like me playing alone. .,120-all too often carries a first aid kit around in case I got injured. . .,149-is usually glad that I am very clingy. . .,157-is very overprotective.
+
+Depressive: 1/7 -- *97-makes it seem he/she will love me less if I made mistakes. (Inverse scoring)
+
+Schizoid: 1/7 -- 18-repeatedly tells me to not disturb him/her.
+
+************************************
+************************************
+
+Dad:
+________________________
+
+Histrionic,Compulsive,Borderline,Antisocial,Schizotypal,Negativistic,Paranoid,Healthy,Sadistic,Masochistic,Narcissistic ,Avoidant,Dependent Father,Depressive
+________________________
+
+Histrionic: 18/26 -- 30-praises me sometimes (not consistently) but rarely punished me.,54-showers me with praise when I performed well.,69-usually makes me feel like her/his �little girl/boy�.,128-loves to see me �all dressed up� when I was young.,135-frequently make me the center of attention.,141-think I�d �be a star someday�.,148-is proud of me because I am so pretty/handsome.,6-often cuddles and comfortes me when I cry.,*3-is strict and raised me right. (F),*53-usually disciplines me harshly. (F),55-hardly ever disciplines me.,59-frequently overindulges and pampers me.,91-tend to praise me all the time,122-typically attends my school functions.,129-usually gave in to my every wish and command.,*133-discourages me from expressing myself.  (F),152-generally praised me for my successes.,161-is generally comfortable with personal affection and closeness.
+
+Compulsive: 2/19 -- 32-doesn�t tolerate immaturity and irresponsibility.,106-has high standards of right and wrong.
+
+Borderline: 3/9 -- 38-and I are so close we sometimes feel like one person.,112-rarely plans anything � we did everything on the spur of the moment.,147-divorced and I am very confused about my place in the world.
+
+Antisocial: 2/11 -- 46-is often too busy with work to care for me.,146-teaches me it�s a �dog-eat-dog� world and I need to fend for myself.
+
+Schizotypal: 2/8 -- 42-considers me the �black sheep� of the family.,158-at times rejected my thoughts and dreams.
+
+Negativistic: 3/10 -- 7-frequently opposes the other parent.,10-never gives me enough credit for the good things I do.,15-argues frequently and I worry that they would divorce.
+
+Paranoid: 1/9 -- 65-allows me to learn from my mistakes.
+
+Healthy: 18/23 -- 1-is generally supportive of the choices I made.,2-encourages me to help others.,11-shared their opinion without insisting I agree with them.,26-often encourages me to share my feelings with them.,44-generally lets my siblings and I work our differences out on our own.,49-enjoys doing family activities together.,50-is respectful with me even when I failed or had done something wrong.,56-is proud when I worked to the best of my ability even if I do not succeed.,64-allows me to select what I wanted to wear to school as long as it was clean.,65-allows me to learn from my mistakes.,74-pays more attention to my positive activities than my negative ones.,75-encourages and coaches me on new tasks without doing it for me.,85-teaches me to openly share my opinions without putting other people down.,109-teaches me that blaming others for how I feel is inappropriate.,118-encouraged me to participate in activities but asked before enrolling me.,121-is available to offer insights/advice when I asked for them.,132-regularly lets me do things for myself that I was capable of doing.,136-appreciates when I accepted responsibility for a mistake (without making me feel worse).
+
+Sadistic: 1/10 -- 87-my mother and/or father usually makes me feel like I should be suspicious of him/her
+
+Masochistic: 4/21 -- 39-my mother and/or father infrequently hugged me as a child,78-my mother and/or father usually encourage me to do stuff on my own,79-my mother and/or father was inconsistent in his/her discipline towards me,158-my mother and/or father at times rejects my thoughts and dreams
+
+Narcissistic : 10/10 -- 43-my mother and/or father usually made me feel like I could do no wrong,54-my mother and/or father showers me with praise when I performed well,59-my mother and/or father frequently overindulged and pampered me,91-my mother mother and/or father tend to praise me all the time,129-my and/or father usually gave in to my every wish and command.,135-my mother and/or father frequently make me the center of attention,137-my mother and/or father think I am God�s gift to Mankind.,141-my mother and/or father think I�d �be a star someday�,148-my mother and/or father is proud of me because I am so pretty/handsome,154-my mother and/or father thinks I was a really special person and gave me whatever I wanted
+
+Avoidant: 2/10 -- 39-infrequently hugged me as a child.,45-will often ignore me when I ask questions.
+
+Dependent Father: 3/9 -- 6-often cuddles and comforts me when I cried. . .,84-will often drop what he/she was doing to get me what I wanted. .,114-tended to not like me playing alone. .
+
+Depressive: 2/7 -- 35-did not hug me enough as a child.,*97-makes it seem he/she will love me less if I made mistakes. (Inverse scoring)

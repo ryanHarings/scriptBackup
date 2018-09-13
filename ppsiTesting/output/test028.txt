@@ -1,0 +1,72 @@
+Mom:
+________________________
+
+Histrionic,Compulsive,Borderline,Antisocial,Schizotypal,Negativistic,Paranoid,Healthy,Sadistic,Masochistic,Avoidant,Dependent Mother,Depressive,Schizoid
+________________________
+
+Histrionic: 7/26 -- 73-promises rewards if I did well but didn�t always follow through.,153-is very dramatic.,14-is over over-reactive and over-emotional.,*3-is strict and raised me right. (F),57-shows me I could easily manipulate their moods.,76-showed me they loved me.,*133-discourages me from expressing myself.  (F)
+
+Compulsive: 17/19 -- 4-overprotects me so much at times I felt like I was in jail.,32-doesn�t tolerate immaturity and irresponsibility.,*40-is relaxed and easy going in her/his parenting. (F),60-has very strict rules and I fear punishment if I broke even a small rule.,61-expects perfection.,*89-encourages my independence. (F),90-is disappointed when I did not live up to her/his high expectations.,99-is very organized and highly scheduled.,106-has high standards of right and wrong.,119-teaches me �if you can�t do it right do nothing at all.�,127-makes it clear what NOT TO DO but not so clear about what I should do.,13-gives me feedback on what I could have done better even when I succeeded.,36-tends to criticize me even when I succeeded.,63-is often overly critical and I really resent her/him for that.,104-often tries to control me.,134-makes me feel she/he wouldn�t love me if I didn�t live up to her/his standards.,151-often punished me severely if I broke a rule.
+
+Borderline: 6/9 -- 5-is inconsistent � sometimes loves me and sometimes rejects me.,14-is extremely over-reactive and overemotional.,*27-helps me feel secure about myself. (F),110-has many mood swings and I didn�t know when she/he will be nice to me.,125-is unpredictable and usually made things very chaotic in my house.,157-is very overprotective.
+
+Antisocial: 4/11 -- 46-is often too busy with work to care for me.,*122-typically attended my school functions. (False),146-teaches me it�s a �dog-eat-dog� world and I need to fend for myself.,156-rarely askes about my feelings and thoughts.
+
+Schizotypal: 6/8 -- 8-is indifferent towards me.,83-discouraged me from playing with other children.,94-is often very critical of me.,95-were often �cold� and �not giving�.,158-at times rejected my thoughts and dreams.,*161-were generally comfortable with personal affection and closeness. (False)
+
+Negativistic: 9/10 -- 7-frequently opposes the other parent.,10-never gives me enough credit for the good things I do.,15-argues frequently and I worry that they would divorce.,*24-rarely broke promises they made to me. (False),36-tends to criticize me even when I succeeded.,37-gives me mixed messages � he/she would say one thing but do another.,80-blames me for things I didn�t do.,82-gives more attention to my siblings than to me.,92-�s uneven behavior toward me often has me �tied in emotional knots.�
+
+Paranoid: 7/9 -- *58-always trusts me and believes in me. (False),104-often tries to control me.,115-made me the scapegoat of the family.,127-makes it clear what NOT TO DO but not so clear about what I should do.,134-makes me feel they wouldn�t love me if I didn�t live up to their standards.,142-generally didn�t trust other people.,151-often punishes me severely if I broke a rule.
+
+Healthy: 8/23 -- 1-is generally supportive of the choices I made.,2-encourages me to help others.,11-shared their opinion without insisting I agree with them.,48-appreciates my uniqueness without giving me special treatment.,49-enjoys doing family activities together.,64-allows me to select what I wanted to wear to school as long as it was clean.,109-teaches me that blaming others for how I feel is inappropriate.,150-generally kept a routine going in our home.
+
+Sadistic: 8/10 -- 21-my mother and/or father frequently takes her/his problems out on me,23-my mother and/or father feels I am a difficult child to manage,53-my mother and/or father usually disciplines me harshly,57-my mother and/or father showed me that I could easily manipulate his/her mood,87-my mother and/or father usually makes me feel like I should be suspicious of him/her,101-my mother and/or father is usually cruel to me,104-my mother and/or father often tries to control me,*138-my mother and/or father was typically trustworthy (reverse coded)
+
+Masochistic: 12/21 -- 5-my mother and/or father was inconsistent - Sometimes loving me and sometimes rejecting me,19-my mother and/or father usually humiliates me when I failed or made a mistake,*27-my mother and/or father helped me feel secure about myself (reverse coded),36-my mother and/or father tend to criticize me even when I succeeded,39-my mother and/or father infrequently hugged me as a child,73-my mother and/or father promises rewards if I do well but don�t always follow through,76-my mother and/or father tend to ridicule and belittle me in front of others,77-my mother and/or father frequently remind me of my past mistakes when I fail,14-my mother and/or father was often very critical of me,111-my mother and/or father treats me harshly even though I clung to them most of the time,130-my mother and/or father only showed me attention when I was sick injured or incompetent,158-my mother and/or father at times rejects my thoughts and dreams
+
+Avoidant: 8/10 -- 19-usually humiliates me when I failed or made a mistake.,39-infrequently hugged me as a child.,45-will often ignore me when I ask questions.,*68-cares about how I was feeling and/or what I was thinking. (Inverse scoring) ,76-tends to ridicule and belittle me in front of others.,77-frequently reminds me of my past mistakes when I failed.,*102-frequently encourages me to play with other children. (Inverse scoring),160-encourages me to spend time in my room.
+
+Dependent Mother: 6/13 -- 20-tends to do everything for me. . .,29-will often say ""Be careful"" or ""Hold my hand."" . .",*70-gives me many responsibilities. (Inverse scoring) . .,*78-usually encourages me to do stuff on my own. (Inverse scoring) . .,*89-encourages my independence. . . (inverse scoring),157-is very overprotective.
+
+Depressive: 6/7 -- *33-is warm and affectionate towards me. (Inverse scoring),35-did not hug me enough as a child.,36-tends to criticize me even when I succeeded.,*62-frequently asks me how my day was. (Inverse scoring),*122-typically attends my school functions. (Inverse scoring),*152-generally praises me for my successes. (Inverse scoring)
+
+Schizoid: 4/7 -- 18-repeatedly tells me to not disturb him/her.,*33-is warm and affectionate towards me. (Inverse scoring),*72-frequently shows me that he/she loved me. (Inverse scoring),*144-tends to include me in family discussions. (Inverse scoring)
+
+************************************
+************************************
+
+Dad:
+________________________
+
+Histrionic,Compulsive,Borderline,Antisocial,Schizotypal,Negativistic,Paranoid,Healthy,Sadistic,Masochistic,Narcissistic ,Avoidant,Dependent Father,Depressive,Schizoid
+________________________
+
+Histrionic: 7/26 -- 54-showers me with praise when I performed well.,73-promises rewards if I did well but didn�t always follow through.,14-is over over-reactive and over-emotional.,*3-is strict and raised me right. (F),*45-would often ignore me when I asked questions. (F),57-shows me I could easily manipulate their moods.,*133-discourages me from expressing myself.  (F)
+
+Compulsive: 8/19 -- 4-overprotects me so much at times I felt like I was in jail.,32-doesn�t tolerate immaturity and irresponsibility.,*40-is relaxed and easy going in her/his parenting. (F),60-has very strict rules and I fear punishment if I broke even a small rule.,127-makes it clear what NOT TO DO but not so clear about what I should do.,36-tends to criticize me even when I succeeded.,63-is often overly critical and I really resent her/him for that.,134-makes me feel she/he wouldn�t love me if I didn�t live up to her/his standards.
+
+Borderline: 3/9 -- 14-is extremely over-reactive and overemotional.,112-rarely plans anything � we did everything on the spur of the moment.,157-is very overprotective.
+
+Antisocial: 4/11 -- 12-expects me to make my own meals even when I was young.,*122-typically attended my school functions. (False),146-teaches me it�s a �dog-eat-dog� world and I need to fend for myself.,156-rarely askes about my feelings and thoughts.
+
+Schizotypal: 3/8 -- 94-is often very critical of me.,158-at times rejected my thoughts and dreams.,*161-were generally comfortable with personal affection and closeness. (False)
+
+Negativistic: 5/10 -- 15-argues frequently and I worry that they would divorce.,*24-rarely broke promises they made to me. (False),36-tends to criticize me even when I succeeded.,80-blames me for things I didn�t do.,82-gives more attention to my siblings than to me.
+
+Paranoid: 4/9 -- *58-always trusts me and believes in me. (False),65-allows me to learn from my mistakes.,127-makes it clear what NOT TO DO but not so clear about what I should do.,134-makes me feel they wouldn�t love me if I didn�t live up to their standards.
+
+Healthy: 11/23 -- 1-is generally supportive of the choices I made.,2-encourages me to help others.,48-appreciates my uniqueness without giving me special treatment.,49-enjoys doing family activities together.,64-allows me to select what I wanted to wear to school as long as it was clean.,65-allows me to learn from my mistakes.,74-pays more attention to my positive activities than my negative ones.,109-teaches me that blaming others for how I feel is inappropriate.,118-encouraged me to participate in activities but asked before enrolling me.,121-is available to offer insights/advice when I asked for them.,150-generally kept a routine going in our home.
+
+Sadistic: 5/10 -- 23-my mother and/or father feels I am a difficult child to manage,53-my mother and/or father usually disciplines me harshly,57-my mother and/or father showed me that I could easily manipulate his/her mood,87-my mother and/or father usually makes me feel like I should be suspicious of him/her,*138-my mother and/or father was typically trustworthy (reverse coded)
+
+Masochistic: 7/21 -- 19-my mother and/or father usually humiliates me when I failed or made a mistake,36-my mother and/or father tend to criticize me even when I succeeded,39-my mother and/or father infrequently hugged me as a child,73-my mother and/or father promises rewards if I do well but don�t always follow through,77-my mother and/or father frequently remind me of my past mistakes when I fail,14-my mother and/or father was often very critical of me,158-my mother and/or father at times rejects my thoughts and dreams
+
+Narcissistic : 1/10 -- 54-my mother and/or father showers me with praise when I performed well
+
+Avoidant: 6/10 -- 12-expects me to make my own meals even when I was younger.,19-usually humiliates me when I failed or made a mistake.,39-infrequently hugged me as a child.,*68-cares about how I was feeling and/or what I was thinking. (Inverse scoring) ,77-frequently reminds me of my past mistakes when I failed.,160-encourages me to spend time in my room.
+
+Dependent Father: 1/9 -- 29-would often say ""Be careful"" or ""Hold my hand.""  ."
+
+Depressive: 6/7 -- *33-is warm and affectionate towards me. (Inverse scoring),35-did not hug me enough as a child.,36-tends to criticize me even when I succeeded.,*62-frequently asks me how my day was. (Inverse scoring),*122-typically attends my school functions. (Inverse scoring),*152-generally praises me for my successes. (Inverse scoring)
+
+Schizoid: 4/7 -- *33-is warm and affectionate towards me. (Inverse scoring),*41-frequently encourages me to try new things. (Inverse scoring),*72-frequently shows me that he/she loved me. (Inverse scoring),*144-tends to include me in family discussions. (Inverse scoring)
