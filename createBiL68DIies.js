@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Path = require('path');
 
-const lengths = ['4','6','8'];
+const lengths = ['4', '6', '8'];
 
 function buildTree() {
   fs.readdir('./', (err, entries) => {
@@ -92,7 +92,7 @@ function processFile(refPath,path) {
       originalData.endAngles = line;
       // while (originalText[index + 1].split(' ')[0] === '') {
         // originalData.endAngles += originalText[index + 1];
-        console.log(originalData.endAngles)
+        // console.log(originalData.endAngles)
         // originalText.splice(index + 1, 1)
       // } 
     } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 5 || line.split(' ').length === 16)) {
@@ -141,9 +141,10 @@ function processFile(refPath,path) {
           // var indNormalizer = ((originalFileName[0].substring(0,2)==="L8" ? 5150.09 : 4959.27) * (newIndData[indColor][0] * Number(length)) / (newData[color][0] * Number(length))) / (originalFileName[0].substring(0,2)==="L8" ? 5142.67 : 4896.22);
           var indNormalizer = (newIndData[indColor][0] * Number(originalFileName[5].split('.')[0])) / (originalFileName[0].substring(0,2)==="L8" ? 5142.67 : 4896.22)
           var dirNormalizer = (newData[color][0] * Number(originalFileName[5].split('.')[0])) / (originalFileName[0].substring(0,2)==="L8" ? 5150.09 : 4959.27)
-          if (color==="840LO" && indColor==="840HO") {
-            console.log(indNormalizer)
-            console.log(dirNormalizer)
+          var dirPercentage = (originalFileName[0].substring(0,2)==="L8" ? 5150.09 : 4959.27) / (originalFileName[0].substring(0,2)==="L8" ? 10292.76 : 9855.49)
+          if (color === '840HO' && indColor==='840LO') {
+            console.log ('dir', dirNormalizer)
+            console.log ('ind', indNormalizer)
           }
           // var indNormalizer =  (newIndData[color][0] / newData[originalFileName[3]][0];
           // if (path.split('-')[0] === "EX3D") {
@@ -172,7 +173,7 @@ function processFile(refPath,path) {
             newFixtureData[dimsArray[0]] = (Number(combFixtureData[dimsArray[0]]) - dimsArray[2]).toFixed(2);
           }
           // helper function to combine the direct and indirect candela data, all normalizers applied
-          var combCandelaData = candelaCombiner(originalData.candelaData, dirNormalizer, indNormalizer);
+          var combCandelaData = candelaCombiner(originalData.candelaData, dirNormalizer, indNormalizer, dirPercentage);
           // sets base combined file name to be replaced on each config
           var oldFile = [originalFileName[0],originalFileName[1],originalFileName[2],originalFileName[3],originalFileName[4],originalFileName[5].split('.')[0]]
           // creates new combined file name
@@ -240,7 +241,7 @@ function processCSV(csvPath, shield) {
 }
 
 // function for combining direct and indirect candela data
-function candelaCombiner(dirArr,dNorm,iNorm) {
+function candelaCombiner(dirArr,dNorm,iNorm,dPerc) {
   // cleans up the lines to remove extraneous spaces and newlines, then removes inverse hemisphere in proud lens applications
   // var directC = fixLines(dirArr).map(dLine => {
   //   return removeInvHem(dLine)
@@ -275,16 +276,24 @@ function candelaCombiner(dirArr,dNorm,iNorm) {
       // for (var j = Math.floor(splitD.length/2); j < splitD.length; j++) {
       //   splitD[j] = (splitD[j] * norm).toFixed(0);
       // }
-      splitD = splitD.map((val, ind) => {
+      var newSplitD = splitD.map((val, ind) => {
         // console.log(ind <= Math.ceil(splitD.length/2))
         // console.log(ind)
         if (ind <= splitD.length/2) {
-          return (val * dNorm).toFixed(0);
-        } else {
-          return (val * iNorm).toFixed(0);
+          return (val * dNorm).toFixed(4);
+        }
+        // else if (ind === Math.ceil(splitD.length/2)) {
+          // console.log(val); 
+          // console.log(ind);
+          // console.log('yes', (((val * dPerc) * dNorm) + (((val * (1-dPerc)) * iNorm))).toFixed(2));
+          
+          // return (((val * dPerc) * dNorm) + (((val * (1-dPerc)) * iNorm))).toFixed(4) ;
+        // } 
+        else {
+          return (val * iNorm).toFixed(4);
         }
       })
-      comb.push(splitD.join(' '))
+      comb.push(newSplitD.join(' '))
     }
   }
   return comb.join('\r\n')

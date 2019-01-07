@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Path = require('path');
 
-const lengths = ['2','3','4'];
+const lengths = ['2','3','4','6','8'];
 // const lengths = ['4'];
 
 function buildTree() {

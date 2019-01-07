@@ -231,7 +231,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
             var biFileName = path.split('-')[0] === 'EX3D' ? 'EX3DI' : 'EX1B';
             var oldFile = [biFileName,originalFileName[1],indFileName[2],originalFileName[3],indFileName[3],originalFileName[4].split('.')[0]]
             // creates new combined file name
-            var newFile = [biFileName,oldFile[1],oldFile[2],color,indColor,length+'-PRELIM'];
+            var newFile = [biFileName,oldFile[1],oldFile[2],color,indColor,length];
             // configuration specific file content replacement
             var newText = combinedText
               .replace(oldFile.join('-'), newFile.join('-'))
