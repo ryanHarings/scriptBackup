@@ -2,6 +2,7 @@ const fs = require('fs');
 const Path = require('path');
 
 const lengths = ['2','3','4'];
+const endAngles = [0,2.5,5,7.5,10,12.5,15,17.5,20,22.5,25,27.5,30,32.5,35,37.5,40,42.5,45,47.5,50,52.5,55,57.5,60,62.5,65,67.5,70,72.5,75,77.5,80,82.5,85,87.5,90,92.5,95,97.5,100,102.5,105,107.5,110,112.5,115,117.5,120,122.5,125,127.5,130,132.5,135,137.5,140,142.5,145,147.5,150,152.5,155,157.5,160,162.5,165,167.5,170,172.5,175,177.5,180]
 
 function buildTree() {
   fs.readdir('./', (err, entries) => {
@@ -197,26 +198,17 @@ function processFile(refPath,refIndPath,path,indPaths) {
             // copies variables to avoid base file modification
             var newFixtureData = combFixtureData.join(' ').split( ' ');
             var newWattageData = originalData.wattageData.split( ' ');
-            // calculates proud lens abs lumens differential 
-            // var dropLensDirDif = originalFileName.includes('AL') ? 1 * Number(originalData.absLumen) : originalFileName.includes('HED') ? 1 * Number(originalData.absLumen) : 0;
-            // var dropLensIndDif = originalFileName.includes('AL') ? 1 * Number(indData.absLumen) : originalFileName.includes('HED') ? 1 * Number(originalData.absLumen) : 0;
-            // var raisedLensDif = originalFileName.includes('HEA') ? 1 * Number(indData.absLumen) : 0;
-            // calculates ratio of direct output to direct abs lumens, normalizer later applied to all indirect data for use in overall file multiplier (IES toolbox)
-            var indNormalizer
-            if (path.split('-')[0] === "EX3D") {
-              indNormalizer = ((Number(originalData.absLumen)) * (newIndData[indColor][0] * Number(length)) / (newData[color][0] * Number(length))) / (Number(indData.absLumen));
-            } else {
-              indNormalizer = color === indColor ? 1 : 1 //unfinished placeholder for errors 
-              console.log(indNormalizer)
-            } 
+            // new dir and ind abs lumens and conversions
+            var dirAbs = newData[color][0] * Number(length);
+            var indAbs = newIndData[indColor][0] * Number(length);
+            var dirNorm = dirAbs / originalData.absLumen;
+            var indNorm = indAbs / indData.absLumen;
             // calculates configuration specific normalized indirect abs lumens to direct abs lumens per above
-            
-            var combAbsLumens = ((Number(originalData.absLumen)) + ((Number(indData.absLumen)) * indNormalizer));
+            var combAbsLumens = newData[color][0] * Number(length) + newIndData[indColor][0] * Number(length).toFixed(0);
             // calculates configuration specific overall file multiplier (IES toolbox) and sets in variable
-            newFixtureData[2] = ((newData[color][0] * Number(length) + newIndData[indColor][0] * Number(length)) / combAbsLumens).toFixed(5);
+            newFixtureData[2] = 1; 
             // calculates configuration specific total wattage and sets in variable
             newWattageData[2] = (newData[color][1] * Number(length) + newIndData[indColor][1] * Number(length)).toFixed(1);
-            console.log(newData[color])
             // notes length and width dim location and delta of base files to config length
             var dimsArray = lengthModifier(newFixtureData, originalFileName[4], length);
             // reorders length and width IF asymmetrical shielding (per IES spec)
@@ -227,7 +219,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
               newFixtureData[dimsArray[0]] = (Number(combFixtureData[dimsArray[0]]) - dimsArray[2]).toFixed(2);
             }
             // helper function to combine the direct and indirect candela data, all normalizers applied
-            var combCandelaData = candelaCombiner(originalData.candelaData, indData.candelaData, indNormalizer);
+            var combCandelaData = candelaCombiner(originalData.candelaData, indData.candelaData, endAngles, dirNorm, indNorm);
             // sets base combined file name to be replaced on each config
             var biFileName = path.split('-')[0] === 'EX3D' ? 'EX3DI' : 'EX1B';
             var oldFile = [biFileName,originalFileName[1],indFileName[2],originalFileName[3],indFileName[3],originalFileName[4].split('.')[0]]
@@ -285,7 +277,7 @@ function processCSV(csvPath, shield) {
         outputObject[color] = [];
         if (Number(splitLine[1]) > Number(splitLine[shieldIndex])) {
           outputObject[color].push(Number(splitLine[1]));
-          outputObject[color].push(Number(splitLine[shieldIndex+1]));
+          outputObject[color].push(Number(splitLine[shieldIndex]));
         } else {
           outputObject[color].push(Number(splitLine[shieldIndex]));
           outputObject[color].push(Number(splitLine[1]));
@@ -297,69 +289,44 @@ function processCSV(csvPath, shield) {
 }
 
 // function for combining direct and indirect candela data
-function candelaCombiner(dirArr,indArr,norm) {
-  // cleans up the lines to remove extraneous spaces and newlines, then removes inverse hemisphere in proud lens applications
-  // var directC = fixLines(dirArr).map(dLine => {
-  //   return removeInvHem(dLine)
-  // });
-  // var indirectC = fixLines(indArr).map(iLine => {
-  //   return removeInvHem(iLine)
-  // });
+function candelaCombiner(dirArr,indArr,angles,dirNorm,indNorm) {
+  // cleans up the lines to remove extraneous spaces and newlines
   var directC = fixLines(dirArr);
   var indirectC = fixLines(indArr);
-  // applies normalizer to indirect candela so the complete file can be scaled uniformly
-  // var normInd = []
-  // indirectC.forEach(line => {
-  //   normInd.push(
-  //     line.split(' ').map(val => {
-  //       if (Number(val) !== 0) {
-  //         return (Number(val) * norm).toFixed(0)
-  //       }
-  //     }).join(' ')
-  //   )
-  // });
+
   // ensures the same number of angle measurements exist by configuration
   if (directC.length < indirectC.length) {
     directC = normalizeAngleQty(directC.reverse());
   } else if (indirectC.length < directC.length) {
     indirectC = normalizeAngleQty(indirectC.reverse());
   }
+  
   // combines the processed candela data
   var comb = []
-  for (var i = 0; i < directC.length; i++) {
-    if (directC[i] !== undefined && indirectC[i] !== undefined) {
-      let splitD = directC[i].split(' ');
-      let splitI = indirectC[i].split(' ');
-      if (splitD.length - splitI.length === 0) {
-        if (splitD.length === 37) {
-          comb.push( directC[i] + indirectC[i] )
-        } else {
-          splitD.forEach((num,ind) => {
-            var indNorm = ind < 36 ? 1 : norm;
-            splitD[ind] = (Number(num) + Number(splitI[ind])) * indNorm
-          })
-          comb.push(splitD)
-        }
-      } else {
-        var hemi;
-        for (var j = 0; j < 37; j++) {
-          if (splitD.length === 73) {
-            if (j === 0) {
-              splitD[j + 36] = (Number(splitD[j + 36]) + Number(splitI[j]))
-            } else {
-              splitD[j + 36] = ((Number(splitD[j + 36]) + Number(splitI[j])) * norm).toFixed(0)
-            }
-            hemi = "D"
-          } else {
-            splitI[j] = Number(splitD[j]) + Number(splitI[j])
-            splitI[j + 36] = Number(splitI[j]) * norm
-            hemi = "I"
-          }
-        }
-        comb.push(eval("split" + hemi))
-      }
-    }
+  // var dirLum = 0;
+  // var indLum = 0;
+  for (var i=0; i < directC.length; i++) {
+    let splitD = directC[i].split(' ');
+    let splitI = indirectC[i].split(' ');
+    let combLine = [];
+    angles.forEach((num,ind) => {
+      var newCand = Number(candToLumToCand(splitD[ind], num, dirNorm)) + Number(candToLumToCand(splitI[ind], num, indNorm))
+      // dirLum += Number(candToLumToCand(splitD[ind], num, 1))
+      // indLum += Number(candToLumToCand(splitI[ind], num, 1))
+      combLine.push(newCand)
+      // if (ind===37) {
+        // console.log(candToLumToCand(splitD[ind], num, dirNorm))
+        // console.log(candToLumToCand(splitI[ind], num, indNorm))
+        // console.log(newCand)
+        // console.log(combLine)
+      // }
+    })
+    comb.push(combLine.join(' '))
   }
+  // var totalLum = dirLum + indLum;
+  // console.log(dirLum)
+  // console.log(indLum)
+  // console.log(totalLum)
   return comb.join('\r\n')
 }
 
@@ -387,7 +354,7 @@ function fixLines(arr) {
   }
 }
 
-// function to remove the inverse hemisphere candela data for proud lens application
+// function to)remove the inverse hemisphere candela data for proud lens application
 function removeInvHem(line) {
   if (line.split(' ').length === 73 && Number(line.split(' ')[0]) > 0) {
     var temp = line.split(' ');
@@ -418,3 +385,29 @@ function normalizeAngleQty(arr) {
   }
   return stretchedArr
 }
+
+// candela/lumen conversion equation
+
+function candToLumToCand(candela, degree, normalizer) {
+  if (degree!==0) {
+    var deg = Math.abs(degree)
+    // console.log(Math.acos(45))
+    console.log(candela)
+    console.log(deg)
+    // console.log(Number(candela * (2 * Math.PI *(1 - Math.cos(deg/2*Math.PI/180)))))
+    // return Number(candela * (2 * Math.PI *(1 - Math.cos(deg/2*Math.PI/180))))
+    console.log("lumen: ", Number(731 * (2 * Math.PI *(1 - Math.cos(90*Math.PI/180)))))
+    return (((candela * (2 * Math.PI *(1 - Math.cos(deg/2)))) * normalizer) / (2 * Math.PI * (1 - Math.cos(deg)))).toFixed(0)
+  } else {
+    var deg = 0.0000000001
+    // return Number(candela * (2 * Math.PI *(1 - Math.acos(deg/2*Math.PI/180))))
+    // console.log(Number(candela * (2 * Math.PI *(1 - Math.cos(deg/2)))))
+    return (((candela * (2 * Math.PI *(1 - Math.cos(deg/2)))) * normalizer) / (2 * Math.PI * (1 - Math.cos(deg)))).toFixed(0)
+  }
+}
+
+// lumen/candela conversion
+
+// function lumToCand(cand, degrees) {
+  // return (cand / (2 * Math.PI * (1 - Math.cos(degrees/2))))
+// }

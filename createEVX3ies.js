@@ -161,7 +161,7 @@ function processCSV(csvPath, shield) {
   csvParse.split(/\r?\n/).forEach((line,index) => {
     var splitLine = line.split(',')
     if (shieldIndex === undefined) {
-      shieldIndex = splitLine.indexOf(shield);
+      shieldIndex = splitLine.indexOf(shield)+1;
     } else if (shieldIndex > -1 && index !== csvParse.split(/\r?\n/).length - 1) {
       if (splitLine[shieldIndex] !== 'N/A') {
         var color = splitLine[0];
