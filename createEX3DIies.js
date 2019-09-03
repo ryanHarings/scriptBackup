@@ -13,11 +13,11 @@ function buildTree() {
 
     entries.forEach((refFile) => {
       const path = Path.join('./', refFile);
-      if (path.match(/\.csv$/) && (path.match(/EX3D/) || path.match(/EX1.csv/))) {
+      if (path.match(/\.csv$/) && (path.match(/EX3D/) || path.match(/EX2D/)|| path.match(/EX4D.csv/))) {
         refPath = path;
-      } else if (path.match(/\.csv$/) && (path.match(/EX3I/) || path.match(/EX12N.csv/))) {
+      } else if (path.match(/\.csv$/) && (path.match(/EX3I/) || path.match(/EX2I/) || path.match(/EX4I/))) {
         refIndPath = path;
-      } else if ((path.match(/\.IES$/) || path.match(/\.ies$/)) && originalFileCheck(path) && (path.split('-')[0] === 'EX3I' || path.split('-')[0] === 'EX12')) {
+      } else if ((path.match(/\.IES$/) || path.match(/\.ies$/)) && originalFileCheck(path) && (path.split('-')[0] === 'EX3I' || path.split('-')[0] === 'EX2I' || path.split('-')[0] === 'EX4I')) {
         indirect.push(path)
       }
     });
@@ -27,7 +27,7 @@ function buildTree() {
     //loops through all IES files in current directory
     entries.forEach((file) => {
       const path = Path.join('./', file);
-      if ((file.match(/\.IES$/) || file.match(/\.ies$/)) && originalFileCheck(path) && (path.split('-')[0] === 'EX3D' || path.split('-')[0] === 'EX1')) {
+      if ((file.match(/\.IES$/) || file.match(/\.ies$/)) && originalFileCheck(path) && (path.split('-')[0] === 'EX3D' || path.split('-')[0] === 'EX2D' || path.split('-')[0] === 'EX4D')) {
         processFile(refPath,refIndPath,path,indirect);
       }
     });
@@ -52,7 +52,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
     fs.mkdirSync(outputDir);
   }
   // set direct file content and chop up file name
-  const originalText = path.split('-')[0] === 'EX3D' ? fs.readFileSync(path, 'utf8').replace('EX3D','EX3DI').split(/\r?\n/) : fs.readFileSync(path, 'utf8').replace('EX1','EX1B').split(/\r?\n/);
+  const originalText = path.split('-')[0] === 'EX3D' ? fs.readFileSync(path, 'utf8').replace('EX3D','EX3DI').split(/\r?\n/) : path.split('-')[0] === 'EX2D' ? fs.readFileSync(path, 'utf8').replace('EX2D','EX2DI').split(/\r?\n/) : fs.readFileSync(path, 'utf8').replace('EX4D','EX4DI').split(/\r?\n/);
 
   const originalFileName = path.split('-');
   // select appropriate direct output data per shielding
@@ -121,8 +121,10 @@ function processFile(refPath,refIndPath,path,indPaths) {
     const indText = fs.readFileSync(indP, 'utf8').split(/\r?\n/);
     const indFileName = indP.split('-');
     // selects appropriate indirect output data per shielding
-    const newIndData = processCSV(refIndPath,indFileName[2]);
+    const newIndData = processCSV(refIndPath,indFileName[1]);
+    console.log(newIndData)
 
+    // console.log(indFileName[2]) 
     // const indLength = indFileName[4]; remove if file has been running 11-10
     // variable for body data
     const indData = {
@@ -177,8 +179,8 @@ function processFile(refPath,refIndPath,path,indPaths) {
       .replace('[TEST]ITL','[TEST]SCALED FROM ITL')
       .replace('-GONIOPHOTOMETRY',' & ' + indData.test)
       .replace('-GONIOPHOTOMETRY','')
-      .replace('-' + originalFileName[1] + '-N', '-' + originalFileName[1] + '-' + indFileName[2])
-      .replace('-' + originalFileName[3], '-' + originalFileName[3] + '-' + indFileName[3])
+      .replace('-' + originalFileName[1], '-' + originalFileName[1] + '-' + indFileName[1])
+      .replace('-' + originalFileName[2], '-' + originalFileName[2] + '-' + indFileName[2])
       .replace('[LAMP]', indData.luminaire.join('\r\n') + '\r\n[LAMP]')
       .replace('[_ABSOLUTELUMENS]','[OTHER]NOTE THIS TEST FILE HAS MULTIPLIER AND/OR WATTAGE ADJUSTMENTS APPLIED FOR CCT, OPTIC OR OUTPUT OPTIONS - CONTACT PINNACLE FACTORY FOR MORE INFORMATION\r\n[_ABSOLUTELUMENS]')
       .replace(originalData.fixtureData, combFixtureData.join(' '))
@@ -187,6 +189,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
 
     // console.log(combinedText);
     //loops through direct output data to build configs
+    console.log(newIndData)
     Object.keys(newData).forEach((color) => {
       // loops through indirect output data to build configs
       Object.keys(newIndData).forEach(indColor => {
@@ -203,7 +206,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
             // var raisedLensDif = originalFileName.includes('HEA') ? 1 * Number(indData.absLumen) : 0;
             // calculates ratio of direct output to direct abs lumens, normalizer later applied to all indirect data for use in overall file multiplier (IES toolbox)
             var indNormalizer
-            if (path.split('-')[0] === "EX3D") {
+            if (path.split('-')[0] === "EX3D" || path.split('-')[0] === "EX2D" || path.split('-')[0] === "EX4D") {
               indNormalizer = ((Number(originalData.absLumen)) * (newIndData[indColor][0] * Number(length)) / (newData[color][0] * Number(length))) / (Number(indData.absLumen));
             } else {
               indNormalizer = color === indColor ? 1 : 1 //unfinished placeholder for errors 
@@ -216,9 +219,8 @@ function processFile(refPath,refIndPath,path,indPaths) {
             newFixtureData[2] = ((newData[color][0] * Number(length) + newIndData[indColor][0] * Number(length)) / combAbsLumens).toFixed(5);
             // calculates configuration specific total wattage and sets in variable
             newWattageData[2] = (newData[color][1] * Number(length) + newIndData[indColor][1] * Number(length)).toFixed(1);
-            console.log(newData[color])
             // notes length and width dim location and delta of base files to config length
-            var dimsArray = lengthModifier(newFixtureData, originalFileName[4], length);
+            var dimsArray = lengthModifier(newFixtureData, originalFileName[3], length);
             // reorders length and width IF asymmetrical shielding (per IES spec)
             if (originalFileName.includes('WHE') || indFileName.includes('WHE')) {
               newFixtureData[newFixtureData.length - 3] = (Number(combFixtureData[dimsArray[0]]) - dimsArray[2]).toFixed(2);
@@ -229,8 +231,8 @@ function processFile(refPath,refIndPath,path,indPaths) {
             // helper function to combine the direct and indirect candela data, all normalizers applied
             var combCandelaData = candelaCombiner(originalData.candelaData, indData.candelaData, indNormalizer);
             // sets base combined file name to be replaced on each config
-            var biFileName = path.split('-')[0] === 'EX3D' ? 'EX3DI' : 'EX1B';
-            var oldFile = [biFileName,originalFileName[1],indFileName[2],originalFileName[3],indFileName[3],originalFileName[4].split('.')[0]]
+            var biFileName = path.split('-')[0] === 'EX3D' ? 'EX3DI' : path.split('-')[0] === 'EX2D' ? 'EX2DI' : 'EX4DI';
+            var oldFile = [biFileName,originalFileName[1],indFileName[1],originalFileName[2],indFileName[2],originalFileName[3].split('.')[0]]
             // creates new combined file name
             var newFile = [biFileName,oldFile[1],oldFile[2],color,indColor,length];
             // configuration specific file content replacement
@@ -241,6 +243,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
               .replace(originalData.wattageData, newWattageData.join(' '))
             // adds file extension to combined file name
             var newFileName = newFile.join('-') + '.IES';
+            // console.log(newFileName)
             // if (newFileName === "EX3DI-AL-BW-835HO-835-4.IES") {
             //   console.log(dropLensDirDif, 'drop dir lens difference')
             //   console.log(dropLensIndDif, 'drop ind lens difference')
@@ -285,7 +288,8 @@ function processCSV(csvPath, shield) {
         outputObject[color] = [];
         if (Number(splitLine[1]) > Number(splitLine[shieldIndex])) {
           outputObject[color].push(Number(splitLine[1]));
-          outputObject[color].push(Number(splitLine[shieldIndex+1]));
+          outputObject[color].push(Number(splitLine[shieldIndex]));
+          // console.log(outputObject)
         } else {
           outputObject[color].push(Number(splitLine[shieldIndex]));
           outputObject[color].push(Number(splitLine[1]));
@@ -293,6 +297,7 @@ function processCSV(csvPath, shield) {
       }
     }
   })
+  // console.log(outputObject)
   return outputObject;
 }
 

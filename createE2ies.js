@@ -1,8 +1,8 @@
 const fs = require('fs');
 const Path = require('path');
 
-const lengths = ['22','44','11','33'];
-// const lengths = ['2','3','4']
+// const lengths = ['22','44','11','33'];
+const lengths = ['2','3','4']
 
 const biAngles = '0 2.5 5 7.5 10 12.5 15 17.5 20 22.5 25 27.5 30 32.5 35 37.5 40 42.5 45 47.5 50 52.5 55 57.5 60 62.5 65 67.5 70 72.5 75 77.5 80 82.5 85 87.5 90 92.5 95 97.5 100 102.5 105 107.5 110 112.5 115 117.5 120 122.5 125 127.5 130 132.5 135 137.5 140 142.5 145 147.5 150 152.5 155 157.5 160 162.5 165 167.5 170 172.5 175 177.5 180'
 
@@ -13,35 +13,73 @@ const noteBody = {
   },
   Q3R: {
     d: '[LUMINAIRE]HOUSING WITH EACH SIDE CONSISTING OF: FABRICATED METAL\r\n[MORE]HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH, FORMED WHITE PAINTED\r\n[MORE]METAL REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36\r\n[MORE]LEDS, EXTRUDED TRANSLUCENT WHITE FROSTED FLAT PLASTIC LENS. LENSES\r\n[MORE]FROSTED BOTH SIDES. OPEN CENTER. EACH OPTICAL COMPARTMENT\r\n[MORE]CIRCUIT BOARD MOUNT HAS OVERLAPPING SECTIONS. THIS CONFIGURATION HAS A\r\n[MORE]TOTAL OF 24 OF THE ENERGIZED LEDS PROVIDING MINIMAL CONTRIBUTION TO THE\r\n[MORE]TOTAL LIGHT OUTPUT.'
+  },
+  EX2D: {
+    d: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, FORMED WHITE PAINTED METAL\r\n[MORE]REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36 LEDS,\r\n[MORE]EXTRUDED PLASTIC REFLECTOR/LENS ASSEMBLY WITH WHITE REFLECTOR AND A\r\n[MORE]TRANSLUCENT WHITE FROSTED PRISMATIC DIFFUSER. DIFFUSER FROSTED BOTH\r\n[MORE]SIDES.',
+    di: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, TOP OPTICAL COMPARTMENT CONSISTS\r\n[MORE]OF FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT, WHITE\r\n[MORE]CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED PLASTIC REFLECTOR/LENS\r\n[MORE]ASSEMBLY WITH WHITE REFLECTOR AND A TRANSLUCENT WHITE FROSTED PRISMATIC\r\n[MORE]DIFFUSER. DIFFUSER FROSTED BOTH SIDES. TOP OPTICAL COMPARTMENT CONSISTS\r\n[MORE]OF FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT, WHITE\r\n[MORE]CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED TRANSLUCENT FROSTED PLASTIC\r\n[MORE]DIFFUSER. DIFFUSER FROSTED BOTH SIDES.'
+  },
+  EX2I: {
+    d: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, FORMED WHITE PAINTED METAL\r\n[MORE]REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36\r\n[MORE]LEDS, EXTRUDED TRANSLUCENT FROSTED PLASTIC DIFFUSER. DIFFUSER FROSTED\r\n[MORE]BOTH SIDES.'
+  },
+  EV2D: {
+    d: '[LUMINAIRE]FABRICATED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR\r\n[MORE]FINISH, FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT,\r\n[MORE]WHITE CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED PLASTIC REFLECTOR/LENS\r\n[MORE]ASSEMBLY WITH WHITE REFLECTOR AND A TRANSLUCENT WHITE FROSTED DIFFUSER.\r\n[MORE]DIFFUSER FROSTED BOTH SIDES.'
+  },
+  EX4D: {
+    d: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, FORMED WHITE PAINTED METAL\r\n[MORE]REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36 LEDS,\r\n[MORE]EXTRUDED PLASTIC REFLECTOR/LENS ASSEMBLY WITH WHITE REFLECTOR AND A\r\n[MORE]TRANSLUCENT WHITE FROSTED PRISMATIC DIFFUSER. DIFFUSER FROSTED BOTH\r\n[MORE]SIDES.',
+    di: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, TOP OPTICAL COMPARTMENT CONSISTS\r\n[MORE]OF FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT, WHITE\r\n[MORE]CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED PLASTIC REFLECTOR/LENS\r\n[MORE]ASSEMBLY WITH WHITE REFLECTOR AND A TRANSLUCENT WHITE FROSTED PRISMATIC\r\n[MORE]DIFFUSER. DIFFUSER FROSTED BOTH SIDES. TOP OPTICAL COMPARTMENT CONSISTS\r\n[MORE]OF FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT, WHITE\r\n[MORE]CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED TRANSLUCENT FROSTED PLASTIC\r\n[MORE]DIFFUSER. DIFFUSER FROSTED BOTH SIDES.'
+  },
+  EX4I: {
+    d: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, FORMED WHITE PAINTED METAL\r\n[MORE]REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36\r\n[MORE]LEDS, EXTRUDED TRANSLUCENT FROSTED PLASTIC DIFFUSER. DIFFUSER FROSTED\r\n[MORE]BOTH SIDES.'
+  },
+
+  EV4D: {
+    d: '[LUMINAIRE]FABRICATED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR\r\n[MORE]FINISH, FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT,\r\n[MORE]WHITE CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED PLASTIC REFLECTOR/LENS\r\n[MORE]ASSEMBLY WITH WHITE REFLECTOR AND A TRANSLUCENT WHITE FROSTED DIFFUSER.\r\n[MORE]DIFFUSER FROSTED BOTH SIDES.'
+  }
+
+}
+
+const missingLumenMult = {
+  EX2D: {
+    AL: 1.208,
+    HED: 1.011
+  },
+  EX2I: {
+    BW: 1.001,
+    HEA: 1.025,
+    WHE: 1.0
+  },
+  EX4D: {
+    AL: 1.125,
+    HED: 1.01
+  },
+  EX4I: {
+    BW: 1.0,
+    HEA: 1.011,
+    WHE: 1.001
   }
 }
-  // const noteBody = {
-  //   Q3S: {
-  //     d: 'test s direct',
-  //     di: 'test s bidirect'
-  //   },
-  //   Q3R: {
-  //     d: 'test recessed'
-  //   }
-  // }
 
 function buildTree() {
   fs.readdir('./', (err, entries) => {
     //find all file names
     var refPath;
     var refIndPath;
-    const indPaths = [];
+    var indPaths = [];
 
     entries.forEach((refFile) => {
       const path = Path.join('./', refFile);
-      if (path.match(/\.csv$/) && (path.match(/Q3R/) || path.match(/Q3S/))) {
+      if (path.match(/D\.csv/)) {
         refPath = path;
-      } else if (path.match(/\.csv$/) && path.match(/Q3I/)) {
+      } else if (path.match(/I\.csv/)) {
         refIndPath = path;
-      } else if ((path.match(/\.IES$/) || path.match(/\.ies$/)) && originalFileCheck(path) && path.split('-')[1].match(/I/)) {
+      } else if ((path.match(/\.IES$/) || path.match(/\.ies$/)) && originalFileCheck(path) && path.split('-')[0].match(/I/)) {
         indPaths.push(path)
       }
     });
+    if (refPath === undefined && refIndPath !== undefined) {
+      refPath = refIndPath;
+      indPaths = []
+    }
 
     console.log('Files:');
     console.log("Direct reference: ", refPath);
@@ -50,7 +88,7 @@ function buildTree() {
     //loops through all IES files in current directory
     entries.forEach((file) => {
       const path = Path.join('./', file);
-      if ((file.match(/\.IES$/) || file.match(/\.ies$/)) && originalFileCheck(path) && path.split('-')[1].match(/D/)) {
+      if ((file.match(/\.IES$/) || file.match(/\.ies$/)) && originalFileCheck(path) && (path.split('-')[0].match(/D/) || (path.split('-')[0].match(/I/) && refPath === refIndPath))) {
         console.log("Direct file: ", path);
         processFile(refPath,refIndPath,path,indPaths);
       }
@@ -80,7 +118,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
 
   const originalFileName = path.split('-');
   // select appropriate direct output data per shielding
-  const newData = processCSV(refPath,originalFileName[2]);
+  const newData = processCSV(refPath,originalFileName[1]);
   // variable for body data
   const originalData = {
     'absLumen': '',
@@ -128,7 +166,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
         originalText.splice(index + 1, 1)
       } 
       originalText[index] = originalData.endAngles
-    } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 5 || line.split(' ').length === 16)) {
+    } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 5 || line.split(' ').length === 16 || line.split(' ').length === 9)) {
       originalData.candelaData.splice(0, originalData.candelaData.length);
       originalData.deleteLines.splice(0, originalData.deleteLines.length);
       originalData.topAngles = line;
@@ -164,7 +202,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
       indText = fs.readFileSync(indP, 'utf8').split(/\r?\n/);
       indFileName = indP.split('-');
       // selects appropriate indirect output data per shielding
-      newIndData = processCSV(refIndPath,indFileName[2]);
+      newIndData = processCSV(refIndPath,indFileName[1]);
 
       // variable for body data
       
@@ -186,7 +224,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
           indData.fixtureData = line;
         } else if (index === indexIndTrace + 1) {
           indData.wattageData = line;
-        } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 5 || line.split(' ').length === 16)) {
+        } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 5 || line.split(' ').length === 16 || line.split(' ').length === 9)) {
           indData.candelaData.splice(0, indData.candelaData.length);
           indData.topAngles = line;
         } else if (index >= indexIndTrace && index < indText.length - 1) {
@@ -232,7 +270,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
           for (var k=0; k<lengths.length - (path.split('-')[0] === "Q3R" ? 2 : 0); k++) {
           // lengths.forEach((length) => {
             var length = originalFileName[1].includes('24') ? '24' : lengths[k];
-            var linLength = length === '24' ? 12 : Number(length.charAt(0)) * 4;
+            var linLength = length === '24' ? 12 : Number(length.charAt(0)) * (length.length > 1 ? 4 : 1);
             // copies variables to avoid base file modification
             var newFixtureData = combFixtureData.join(' ').split( ' ');
             var newWattageData = originalData.wattageData.split( ' ');
@@ -270,20 +308,36 @@ function processFile(refPath,refIndPath,path,indPaths) {
             newWattageData[2] = combWattage.toFixed(1)
 
             // notes length and width dim location and delta of base files to config length
-            var dimsArray = lengthModifier(newFixtureData, originalFileName[1].substring(0,2), length);
-            newFixtureData[dimsArray[0]] = (Number(combFixtureData[dimsArray[0]]) - dimsArray[1]).toFixed(2);
-            newFixtureData[dimsArray[2]] = (Number(combFixtureData[dimsArray[2]]) - dimsArray[3]).toFixed(2);
+            // var dimsArray = lengthModifier(newFixtureData, originalFileName[1].substring(0,2), length);
+            var dimsArray = lengthModifier(newFixtureData, originalFileName[3].substring(0,1), length);
+            newFixtureData[dimsArray[(indPaths.length > 0 && indFileName[1] === "WHE" && originalFileName[1] !== "WHE" ? 1 : 0)]] = (Number(combFixtureData[dimsArray[0]]) - dimsArray[2]).toFixed(2);
+            // newFixtureData[dimsArray[2]] = (Number(combFixtureData[dimsArray[2]]) - dimsArray[3]).toFixed(2);
+            newFixtureData[dimsArray[(indPaths.length > 0 && indFileName[1] === "WHE" && originalFileName[1] !== "WHE" ? 0 : 1)]] = Number(combFixtureData[dimsArray[1]]).toFixed(2);
 
             // helper function to combine the direct and indirect candela data, all normalizers applied
-            var combCandelaData = candelaCombiner(originalData.candelaData, indData.candelaData, dirNormalizer, indNormalizer);
+            var dirMissingLumenM = 1
+            var indMissingLumenM = 1
+
+            if (indPaths.length>0) {
+              if (originalFileName[1] === "AL" || originalFileName[1] === "HED") {
+                dirMissingLumenM = missingLumenMult[originalFileName[0]][originalFileName[1]]
+              }
+              if (indFileName[1] === "HEA" || indFileName[1] === "BW" || (indFileName[1]==="WHE" && indFileName[0]==="EX4I")) {
+                indMissingLumenM = missingLumenMult[indFileName[0]][indFileName[1]]
+              }
+            }
+
+            var combCandelaData = candelaCombiner(originalData.candelaData, indData.candelaData, dirNormalizer, indNormalizer, dirMissingLumenM, indMissingLumenM);
             // sets base combined file name to be replaced on each config
             var biFileName = path.split('-')[0];
             var oldFile = [biFileName,originalFileName[1],originalFileName[2],originalFileName[3].replace('.IES', '')]
             // creates new combined file name
             if (indPaths.length>0) {
-              var newFile = [biFileName,length+"DI",oldFile[2],indFileName[2],color,indColor];
+              // var newFile = [biFileName,length+"DI",oldFile[2],indFileName[2],color,indColor];
+              var newFile = [biFileName+'I',oldFile[1],indFileName[1],color,indColor,length]
             } else {
-              var newFile = [biFileName,length+"D",oldFile[2],color];
+              // var newFile = [biFileName,length+"D",oldFile[2],color];
+              var newFile = [biFileName,oldFile[1],color,length]
             }
             // configuration specific file content replacement
             var newText = combinedText
@@ -306,11 +360,20 @@ function processFile(refPath,refIndPath,path,indPaths) {
 function lengthModifier(fixArray,origL,newL) {
   var lengthDim = fixArray.length - 2;
   var widthDim = fixArray.length - 3;
+  if (fixArray[widthDim] > fixArray[lengthDim]) {
+    var tempDim = lengthDim;
+    lengthDim = widthDim;
+    widthDim = tempDim;
+  }
+  // console.log(lengthDim)
+  // console.log(widthDim)
+  // console.log(origL)
   
   var lDiff = Number(origL.charAt(0)) - Number(newL.charAt(0));
-  var wDiff = Number(origL.charAt(1)) - Number(newL.charAt(1));
+  // var wDiff = Number(origL.charAt(1)) - Number(newL.charAt(1));
 
-  return [lengthDim, wDiff, widthDim, lDiff]
+  // return [lengthDim, wDiff, widthDim, lDiff]
+  return [lengthDim, widthDim, lDiff]
 }
 
 // function for selecting shielding specific output data
@@ -340,47 +403,94 @@ function processCSV(csvPath, shield) {
 }
 
 // function for combining direct and indirect candela data
-function candelaCombiner(dirArr,indArr, dNorm, iNorm) {
+function candelaCombiner(dirArr,indArr, dNorm, iNorm, dRep, iRep) {
   // cleans up the lines to remove extraneous spaces and newlines, then removes inverse hemisphere in proud lens applications
   var directC = fixLines(dirArr);
   var indirectC = fixLines(indArr);
+  console.log(directC)
   // ensures the same number of angle measurements exist by configuration
-  // if (directC.length < indirectC.length) {
-    // directC = normalizeAngleQty(directC.reverse());
-  // } else if (indirectC.length < directC.length) {
-    // indirectC = normalizeAngleQty(indirectC.reverse());
-  // }
-
+  if (directC.length < indirectC.length) {
+    // directC = normalizeAngleQty(directC.reverse(), indirectC.length);
+    directC = normalizeAngleQty(directC, indirectC.length);
+  } else if (indirectC.length < directC.length) {
+    // indirectC = normalizeAngleQty(indirectC.reverse(), directC.length);
+    indirectC = normalizeAngleQty(indirectC, directC.length);
+  }
+  console.log(directC)
+  
   // combines the processed candela data
-  var comb = []
+  var comb = [] 
+  
+  // var dirTotal = 0
+  // var dirMissing = 0
+
   for (var i = 0; i < directC.length; i++) {
-    let splitD = directC[i].split(' ').map(cand=>{
-      return (Number(cand)*dNorm).toFixed(1);
+    let splitD = directC[i].split(' ')
+
+    // var dirRep = 1
+
+    // if (splitD.length>37 && indirectC.length!==0) {
+      // var dirTotal = 0;
+      // var dirMissing = 0;
+      // splitD.forEach((cand,ind)=>{
+        // dirTotal += Number(cand);
+        // if (ind > 36) {
+          // dirMissing += Number(cand)
+        // }
+      // })
+      // dirRep = 1 + dirMissing/dirTotal
+      // console.log(dirRep)
+    // }
+
+    splitD = splitD.map(cand=>{
+      return (Number(cand)*dNorm*dRep).toFixed(1);
     });
+
     let splitI
-    if (indirectC.length!==0) {
-      splitI = indirectC[i].split(' ').map(cand=>{
-        return (Number(cand)*iNorm).toFixed(1);
+    if (indirectC.length !== 0) {
+      splitI = indirectC[i].split(' ')
+
+      // var indRep = 1
+
+      // if (splitI.length>37 && directC.length!==0) {
+        // var indTotal = 0;
+        // var indMissing = 0;
+        // splitI.forEach((cand,ind)=>{
+          // indTotal += Number(cand);
+          // if (ind < 36) {
+            // dirMissing += Number(cand)
+          // }
+        // })
+        // indRep += indMissing/indTotal/37
+        // console.log(indRep)
+      // }
+
+      splitI = splitI.map(cand=>{
+        return (Number(cand)*iNorm*iRep).toFixed(1);
       });
     } else {
       splitI = undefined
     }
 
     if (splitI!==undefined && splitI.length>0) {
-      splitD[36] += Number(splitI.shift())
-      splitD = splitD.concat(splitI)
-      comb.push(splitD.join(' '))
-    } else {
-      comb.push(splitD.join(' '))
+      if (splitD.length === splitI.length && splitD.length === 37) {
+        splitD[36] = Number(splitD.pop()) + Number(splitI.shift())
+        splitD = splitD.concat(splitI)
+      } else if (splitD.length > splitI.length) {
+        splitD = splitD.slice(0, 37).concat(splitI.slice(1, splitI.length))        
+      } else if (splitI.length > splitD.length || (splitD.length === splitI.length && splitD.length === 73)) {
+        splitD = splitD.slice(0, 36).concat(splitI.slice(36, splitI.length))
+      }
     }
+
+    comb.push(splitD.join(' '))
   }
   return comb.join('\r\n')
 }
 
 // function to clean up the block of candela data, removing extra spaces and newlines
 function fixLines(arr) {
-  // console.log(arr)
-  if (arr.length !== 5 && arr.length !== 16) {
+  if (arr.length !== 5 && arr.length !== 16 && arr.length !== 9) {
     var newArray = []
     var start
     arr.forEach((line,index) => {
@@ -418,18 +528,30 @@ function removeInvHem(line) {
 }
 
 // function to extrapolate candela data over more angle measurement points
-function normalizeAngleQty(arr) {
-  var stretchedArr = [];
+// function normalizeAngleQty(arr) {
+//   var stretchedArr = [];
+//   arr.forEach((elem,ind) => {
+//     stretchedArr.push(elem)
+//     if (ind !== 2 && (arr.length > 5 ? ind !== 6 : true)) {
+//       stretchedArr.push(elem)
+//     }
+//   })
+//   return stretchedArr
+// }
 
-  arr.map((line, index) => {
-    stretchedArr.push(line);
-    stretchedArr.push(line);
-    if (index === 2 || index === 4) {
-      stretchedArr.push(line);
+function normalizeAngleQty(arr, ref) {
+  var stretchedArr = [];
+  arr.forEach((elem,ind) => {
+    stretchedArr.push(elem)
+    if ((ref===9 && ind!==2) || (ref===16 && ind!==0 && ind!==(arr.length===5 ? 4 : 8))) {
+      stretchedArr.push(elem)
+    }
+    if (ref===16 && arr.length===5 && ind!==2) {
+      stretchedArr.push(elem)
+      stretchedArr.push(elem)
     }
   })
-  for (var i = arr.length - 2;i >= 0;i--) {
-    stretchedArr.push(arr[i]);
-  }
   return stretchedArr
 }
+// function to add the missing candela to remaining candela
+

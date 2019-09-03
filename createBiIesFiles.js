@@ -13,11 +13,11 @@ function buildTree() {
 
     entries.forEach((refFile) => {
       const path = Path.join('./', refFile);
-      if (path.match(/\.csv$/) && (path.match(/EX3D/) || path.match(/EX1.csv/))) {
+      if (path.match(/\.csv$/) && (path.match(/EX3D/) || path.match(/EX2D/) || path.match(/EX1.csv/))) {
         refPath = path;
-      } else if (path.match(/\.csv$/) && (path.match(/EX3I/) || path.match(/EX12N.csv/))) {
+      } else if (path.match(/\.csv$/) && (path.match(/EX3I/) || path.match(/EX2I/) || path.match(/EX12N.csv/))) {
         refIndPath = path;
-      } else if ((path.match(/\.IES$/) || path.match(/\.ies$/)) && originalFileCheck(path) && (path.split('-')[0] === 'EX3I' || path.split('-')[0] === 'EX12')) {
+      } else if ((path.match(/\.IES$/) || path.match(/\.ies$/)) && originalFileCheck(path) && (path.split('-')[0] === 'EX3I' || path.split('-')[0] === 'EX2I' || path.split('-')[0] === 'EX12')) {
         indirect.push(path)
       }
     });
@@ -27,7 +27,7 @@ function buildTree() {
     //loops through all IES files in current directory
     entries.forEach((file) => {
       const path = Path.join('./', file);
-      if ((file.match(/\.IES$/) || file.match(/\.ies$/)) && originalFileCheck(path) && (path.split('-')[0] === 'EX3D' || path.split('-')[0] === 'EX1')) {
+      if ((file.match(/\.IES$/) || file.match(/\.ies$/)) && originalFileCheck(path) && (path.split('-')[0] === 'EX3D' || path.split('-')[0] === 'EX2D' || path.split('-')[0] === 'EX1')) {
         processFile(refPath,refIndPath,path,indirect);
       }
     });
@@ -52,7 +52,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
     fs.mkdirSync(outputDir);
   }
   // set direct file content and chop up file name
-  const originalText = path.split('-')[0] === 'EX3D' ? fs.readFileSync(path, 'utf8').replace('EX3D','EX3DI').split(/\r?\n/) : fs.readFileSync(path, 'utf8').replace('EX1','EX1B').split(/\r?\n/);
+  const originalText = path.split('-')[0] === 'EX3D' ? fs.readFileSync(path, 'utf8').replace('EX3D','EX3DI').split(/\r?\n/) : path.split('-')[0] === 'EX2D' ? fs.readFileSync(path, 'utf8').replace('EX2D','EX2DI').split(/\r?\n/) : fs.readFileSync(path, 'utf8').replace('EX1','EX1B').split(/\r?\n/);
 
   const originalFileName = path.split('-');
   // select appropriate direct output data per shielding
@@ -203,7 +203,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
             var raisedLensDif = originalFileName.includes('HEA') ? 0.02 * Number(indData.absLumen) : 0;
             // calculates ratio of direct output to direct abs lumens, normalizer later applied to all indirect data for use in overall file multiplier (IES toolbox)
             var indNormalizer
-            if (path.split('-')[0] === "EX3D") {
+            if (path.split('-')[0] === "EX3D" || path.split('-')[0] === "EX2D") {
               indNormalizer = ((Number(originalData.absLumen) - dropLensDirDif + raisedLensDif) * (newIndData[indColor][0] * Number(length)) / (newData[color][0] * Number(length))) / (Number(indData.absLumen) + dropLensIndDif - raisedLensDif);
             } else {
               indNormalizer = color === indColor ? 1 : 1 //unfinished placeholder for errors 
@@ -228,10 +228,10 @@ function processFile(refPath,refIndPath,path,indPaths) {
             // helper function to combine the direct and indirect candela data, all normalizers applied
             var combCandelaData = candelaCombiner(originalData.candelaData, indData.candelaData, indNormalizer);
             // sets base combined file name to be replaced on each config
-            var biFileName = path.split('-')[0] === 'EX3D' ? 'EX3DI' : 'EX1B';
+            var biFileName = path.split('-')[0] === 'EX3D' ? 'EX3DI' : path.split('-')[0] === 'EX2D' ? 'EX2DI' : 'EX1B';
             var oldFile = [biFileName,originalFileName[1],indFileName[2],originalFileName[3],indFileName[3],originalFileName[4].split('.')[0]]
             // creates new combined file name
-            var newFile = [biFileName,oldFile[1],oldFile[2],color,indColor,length+'-PRELIM'];
+            var newFile = [biFileName,oldFile[1],oldFile[2],color,indColor,length];
             // configuration specific file content replacement
             var newText = combinedText
               .replace(oldFile.join('-'), newFile.join('-'))

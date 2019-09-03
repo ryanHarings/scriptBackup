@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Path = require('path');
 
-const lengths = ['2','3','4','6','8'];
+const lengths = ['2','3','4'];
 // const lengths = ['4'];
 
 function buildTree() {
@@ -161,7 +161,7 @@ function processCSV(csvPath, shield) {
   csvParse.split(/\r?\n/).forEach((line,index) => {
     var splitLine = line.split(',')
     if (shieldIndex === undefined) {
-      shieldIndex = splitLine.indexOf(shield)+1;
+      shieldIndex = splitLine.indexOf(shield);
     } else if (shieldIndex > -1 && index !== csvParse.split(/\r?\n/).length - 1) {
       if (splitLine[shieldIndex] !== 'N/A') {
         var color = splitLine[0];
