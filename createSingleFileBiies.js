@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Path = require('path');
 
-const lengths = ['4', '6', '8'];
+const lengths = ['2', '3', '4'];
 
 function buildTree() {
   fs.readdir('./', (err, entries) => {
@@ -66,10 +66,10 @@ function processFile(refPath,path) {
   // loop through each line of direct body and set data or change verbiage
   originalText.forEach((line, index) => {
     if (line.includes('[LUMINAIRE]')) {
-      if (originalText[index + 1].includes('FINISH, ')) {
-        originalText[index + 1].replace('FINISH, ', '');
-      }
-      originalText[index] = '[LUMINAIRE]FABRICATED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND 2 DISTINCT OPTICAL COMPARTMENTS, TOP OPTICAL COMPARTMENT CONSISTS OF:';
+      // if (originalText[index + 1].includes('FINISH, ')) {
+      //   originalText[index + 1].replace('FINISH, ', '');
+      // }
+      // originalText[index] = '[LUMINAIRE]FABRICATED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND 2 DISTINCT OPTICAL COMPARTMENTS, TOP OPTICAL COMPARTMENT CONSISTS OF:';
     } else if (line.includes('[LAMP]')) {
       if (originalText[index + 1].includes('[MORE]')) {
         originalText.splice(index + 1, 1);
@@ -139,13 +139,15 @@ function processFile(refPath,path) {
           // var indNormalizer = (Number(originalData.absLumen) * (newIndData[indColor][0] * Number(length)) / (newData[color][0] * Number(length))) / Number(indData.absLumen);
           // var indNormalizer = ((originalFileName[0].substring(0,2)==="L8" ? 5150.09 : 4959.27) * (newIndData[indColor][0] * Number(length)) / (newData[color][0] * Number(length))) / (originalFileName[0].substring(0,2)==="L8" ? 5142.67 : 4896.22);
           // var indNormalizer = ((originalFileName[0].substring(0,2)==="L8" ? 5150.09 : 4959.27) * (newIndData[indColor][0] * Number(length)) / (newData[color][0] * Number(length))) / (originalFileName[0].substring(0,2)==="L8" ? 5142.67 : 4896.22);
-          var indNormalizer = (newIndData[indColor][0] * Number(originalFileName[5].split('.')[0])) / (originalFileName[0].substring(0,2)==="L8" ? 5142.67 : 4896.22)
-          var dirNormalizer = (newData[color][0] * Number(originalFileName[5].split('.')[0])) / (originalFileName[0].substring(0,2)==="L8" ? 5150.09 : 4959.27)
-          var dirPercentage = (originalFileName[0].substring(0,2)==="L8" ? 5150.09 : 4959.27) / (originalFileName[0].substring(0,2)==="L8" ? 10292.76 : 9855.49)
-          if (color === '840HO' && indColor==='840LO') {
-            console.log ('dir', dirNormalizer)
-            console.log ('ind', indNormalizer)
-          }
+        //   var dirPercentage = (newData[originalFileName[3]][0] * Number(originalFileName[5].split('.')[0])) / (newIndData[originalFileName[4]][0] * Number(originalFileName[5].split('.')[0]) + newData[originalFileName[3]][0] * Number(originalFileName[5].split('.')[0]))
+          var dirPercentage = originalFileName[0] === "EX3B" ? .367438 : .38737 //.391636 //.6366 //.387379
+          var indNormalizer = (newIndData[indColor][0] * Number(originalFileName[5].split('.')[0])) / (Number(originalData.absLumen) * (1 - dirPercentage))
+          var dirNormalizer = (newData[color][0] * Number(originalFileName[5].split('.')[0])) / (Number(originalData.absLumen) * dirPercentage)
+          
+          // if (color === '840HO' && indColor==='840LO') {
+          //   console.log ('dir', dirNormalizer)
+          //   console.log ('ind', indNormalizer)
+          // }
           // var indNormalizer =  (newIndData[color][0] / newData[originalFileName[3]][0];
           // if (path.split('-')[0] === "EX3D") {
             // indNormalizer = ((Number(originalData.absLumen) - dropLensDirDif + raisedLensDif) * (newIndData[indColor][0] * Number(length)) / (newData[color][0] * Number(length))) / (Number(indData.absLumen) + dropLensIndDif - raisedLensDif);

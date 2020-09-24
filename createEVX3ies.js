@@ -134,7 +134,7 @@ function processFile(refPath,path) {
         .replace(originalData.wattageData, newWattageData.join(' '));
 
       var newFileName = newFile.join('-') + '.IES';
-      fs.writeFile(outputDir + '/' + newFileName, newText);
+      fs.writeFileSync(outputDir + '/' + newFileName, newText);
       totalOutputCount++;
     })
   })

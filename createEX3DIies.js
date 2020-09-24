@@ -253,7 +253,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
             //   console.log(Number(indData.absLumen) + dropLensIndDif, 'ind abs lumens plus dif')
             // }
             // writes each file with content to output dir (if colors match per above)
-            fs.writeFile(outputDir + '/' + newFileName, newText + combCandelaData);
+            fs.writeFileSync(outputDir + '/' + newFileName, newText + combCandelaData);
           })
         }
       })

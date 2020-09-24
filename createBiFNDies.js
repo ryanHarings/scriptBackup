@@ -1,9 +1,11 @@
+//for use with Bi FND and LFD
+
 const fs = require('fs');
 const Path = require('path');
 
 // const lengths = ['22','44','11','33'];
 // const lengths = ['3']
-const lengths = ['2','3','4']
+// const lengths = ['2','3','4']
 
 const biAngles = '0 2.5 5 7.5 10 12.5 15 17.5 20 22.5 25 27.5 30 32.5 35 37.5 40 42.5 45 47.5 50 52.5 55 57.5 60 62.5 65 67.5 70 72.5 75 77.5 80 82.5 85 87.5 90 92.5 95 97.5 100 102.5 105 107.5 110 112.5 115 117.5 120 122.5 125 127.5 130 132.5 135 137.5 140 142.5 145 147.5 150 152.5 155 157.5 160 162.5 165 167.5 170 172.5 175 177.5 180'
 
@@ -66,12 +68,33 @@ const missingLumenMult = {
     BW: 1.0,
     HEA: 1.011,
     WHE: 1.001
+  },
+  LF14D: {
+    AL: 1.04
+  },
+  LF22D: {
+    AL: 1.0203
+  },
+  LF24D: {
+    AL: 1.02773
+  },
+  LF44D: {
+    AL: 1.0112
+  },
+  F24D: {
+    AL: 1.0184
+  },
+  F36D: {
+    AL: 1.0136
+  },
+  F48D: {
+    AL: 1.0124
   }
 }
 
 function buildTree() {
   fs.readdir('./', (err, entries) => {
-    //find all file names
+    // find all file names
     var refPath;
     var refIndPath;
     var indPaths = [];
@@ -79,7 +102,7 @@ function buildTree() {
     entries.forEach((refFile) => {
       const path = Path.join('./', refFile);
       // if (path.match(/\.csv/)) {
-      if (path.match(/MW\.csv/) || path.match(/M\.csv/) || path.match(/D\.csv/)) {
+      if (path.match(/FND\.csv/) || path.match(/LFD\.csv/)) {
         refPath = path;
       } else if (path.match(/I\.csv/)) {
         refIndPath = path;
@@ -88,6 +111,7 @@ function buildTree() {
       }
     });
     if (refPath === undefined && refIndPath !== undefined) {
+      console.log('here')
       refPath = refIndPath;
       indPaths = []
       var refIndPath
@@ -101,7 +125,7 @@ function buildTree() {
     entries.forEach((file) => {
       const path = Path.join('./', file);
       // console.log(path.split('-')[0].match(/I/))
-      if ((path.split('-')[0].match(/D/) || (path.split('-')[0].match(/I/) && indPaths.length === 0) || path.split('-')[0].match(/M/)) && (file.match(/\.IES$/) || file.match(/\.ies$/))) {
+      if ((path.split('-')[0].match(/D/) || (path.split('-')[0].match(/I/) && indPaths.length === 0)) && (file.match(/\.IES$/) || file.match(/\.ies$/))) {
         console.log("Direct file: ", path);
         processFile(refPath,refIndPath,path,indPaths);
       }
@@ -131,7 +155,13 @@ function processFile(refPath,refIndPath,path,indPaths) {
 
   const originalFileName = path.split('-');
   // select appropriate direct output data per shielding
-  const newData = processCSV(refPath,originalFileName[1]);
+  const newData = processCSV(refPath,originalFileName[0].includes("LF") ? originalFileName[0].substring(2,4) : originalFileName[0].substring(1,3));
+  
+  const noteBody = {
+    F: '[LUMINAIRE]FABRICATED WHITE PAINTED METAL HOUSING; DIRECT: WHITE PAINTED\r\n[MORE]FLAT METAL REFLECTOR/CIRCUIT BOARD MOUNT, 1 WHITE CIRCUIT BOARD WITH 126 LEDS,'+ (originalFileName[0].includes("24") ? "" : '\r\n[MORE]6 WHITE CIRCUIT BOARDS EACH WITH 33 LEDS, ')+(originalFileName[0].includes("48") ? '6 WHITE CIRCUIT BOARDS EACH WITH 50 LEDS,' : "") +'\r\n[MORE]TRANSLUCENT WHITE FROSTED FLAT PLASTIC DIFFUSER, DIFFUSER FROSTED BOTH SIDES;\r\n[MORE]INDIRECT: FORMED WHITE PAINTED METAL DRIVER HOUSING, '+(originalFileName[0].includes("48") ? 12 : originalFileName[0].includes("36") ? 8 : 4)+' WHITE\r\n[MORE]CIRCUIT BOARDS EACH WITH 36 LEDS, CLEAR FLAT PLASTIC TOP LENS.',  
+    L: '[LUMINAIRE]FABRICATED WHITE PAINTED METAL HOUSING; DIRECT: WHITE PAINTED\r\n[MORE]FLAT METAL REFLECTOR/CIRCUIT BOARD MOUNT, '+(originalFileName[0].includes("44") ? 16 : originalFileName[0].includes("24") ? 8 : 4)+' WHITE CIRCUIT BOARDS EACH WITH 100 LEDS,\r\n[MORE]TRANSLUCENT WHITE FROSTED FLAT PLASTIC DIFFUSER, DIFFUSER FROSTED BOTH SIDES;\r\n[MORE]INDIRECT: FORMED WHITE PAINTED METAL DRIVER HOUSING, '+(originalFileName[0].includes("44") ? 12 : originalFileName[0].includes("24") ? 8 : 4)+' WHITE CIRCUIT BOARDS EACH\r\n[MORE]WITH 36 LEDS, CLEAR FLAT PLASTIC TOP LENS.'
+  }
+
   // variable for body data
   const originalData = {
     'absLumen': '',
@@ -147,11 +177,10 @@ function processFile(refPath,refIndPath,path,indPaths) {
   // loop through each line of direct body and set data or change verbiage
   originalText.forEach((line, index) => {
     if (line.includes('[LUMINAIRE]')) {
-      // while (originalText[index + 1].includes('[MORE]')) {
-        // originalText.splice(index + 1, 1)
-      // }
-      // var bodyText = noteBody[originalFileName[0]]
-      // originalText[index] = bodyText[(indPaths.length>0 ? 'di' : 'd')];
+      while (originalText[index + 1].includes('[MORE]')) {
+        originalText.splice(index + 1, 1)
+      }
+      originalText[index] = noteBody[originalFileName[0].charAt(0)];
     } else if (line.includes('[LAMP]')) {
       if (originalText[index + 1].includes('[MORE]')) {
         originalText.splice(index + 1, 1);
@@ -179,10 +208,13 @@ function processFile(refPath,refIndPath,path,indPaths) {
         originalText.splice(index + 1, 1)
       } 
       originalText[index] = originalData.endAngles
-    } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 5 || line.split(' ').length === 16 || line.split(' ').length === 9 || line.split(' ').length === 11)) {
+    } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 5 || line.split(' ').length === 16 || line.split(' ').length === 9 || line.split(' ').length === 1)) {
       originalData.candelaData.splice(0, originalData.candelaData.length);
       originalData.deleteLines.splice(0, originalData.deleteLines.length);
       originalData.topAngles = line;
+      if (originalData.topAngles.length === 1) {
+        originalData.deleteLines.push(index)
+      }
     } else if (index > indexTrace && index < originalText.length - 1) {
       originalData.candelaData.push(line);
       originalData.deleteLines.push(index)
@@ -215,8 +247,8 @@ function processFile(refPath,refIndPath,path,indPaths) {
       indText = fs.readFileSync(indP, 'utf8').split(/\r?\n/);
       indFileName = indP.split('-');
       // selects appropriate indirect output data per shielding
-      newIndData = processCSV(refIndPath,indFileName[1]);
-
+      newIndData = processCSV(refIndPath,indFileName[0].includes("LF") ? indFileName[0].substring(2,4) : originalFileName[0].substring(1,3));
+      // processCSV(refPath,originalFileName[0].includes("LF") ? originalFileName[0].substring(2,4) : originalFileName[0].substring(1,3));
       // variable for body data
       
       // loop through each line of indirect body and set data or change verbiage
@@ -237,7 +269,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
           indData.fixtureData = line;
         } else if (index === indexIndTrace + 1) {
           indData.wattageData = line;
-        } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 5 || line.split(' ').length === 16 || line.split(' ').length === 9)) {
+        } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 1 || line.split(' ').length === 5 || line.split(' ').length === 16 || line.split(' ').length === 9)) {
           indData.candelaData.splice(0, indData.candelaData.length);
           indData.topAngles = line;
         } else if (index >= indexIndTrace && index < indText.length - 1) {
@@ -246,6 +278,9 @@ function processFile(refPath,refIndPath,path,indPaths) {
       });
     }
 
+    if (originalData.topAngles.split(' ').length === 1) {
+      originalText[originalText.length] = (originalData.topAngles.length > indData.topAngles.length ? originalData.topAngles : indData.topAngles) + '\r\n'
+    }
     // combines/replaces fixture data to establish combined base file content
     var combFixtureData = originalData.fixtureData.split(' ');
     // diode qty
@@ -268,7 +303,12 @@ function processFile(refPath,refIndPath,path,indPaths) {
       .replace('[_ABSOLUTELUMENS]','[OTHER]NOTE THIS TEST FILE HAS MULTIPLIER AND/OR WATTAGE ADJUSTMENTS APPLIED FOR CCT, OPTIC OR OUTPUT OPTIONS - CONTACT PINNACLE FACTORY FOR MORE INFORMATION\r\n[_ABSOLUTELUMENS]')
       .replace(originalData.fixtureData, combFixtureData.join(' '))
       .replace(originalData.endAngles, indPaths.length>0 ? biAngles : originalData.endAngles)
-      .replace(originalData.topAngles, combTopAngles);
+
+      // .replace(originalData.topAngles.length === 1 ? "nothing" : originalData.topAngles, combTopAngles);
+
+    // console.log(originalData.topAngles)
+    // console.log(combTopAngles)
+    
     //loops through direct output data to build configs
     Object.keys(newData).forEach((color) => {
       // loops through indirect output data to build configs
@@ -280,15 +320,15 @@ function processFile(refPath,refIndPath,path,indPaths) {
         // ensures only output of common colors is processed
         if (indPaths.length === 0 || color.substr(0,3) === indColor.substr(0,3)) {
           // loops through each length to build configs
-          for (var k=0; k<lengths.length - (path.split('-')[0] === "Q3R" ? 2 : 0); k++) {
+          for (var k=0; k<1; k++) {
           // lengths.forEach((length) => {
-            var length = originalFileName[1].includes('24') ? '24' : lengths[k];
-            var linLength = length === '24' ? 12 : Number(length.charAt(0)) * (length.length > 1 ? 4 : 1);
+            // var length = originalFileName[1].includes('24') ? '24' : lengths[k];
+            // var linLength = length === '24' ? 12 : Number(length.charAt(0)) * (length.length > 1 ? 4 : 1);
             // copies variables to avoid base file modification
             var newFixtureData = combFixtureData.join(' ').split( ' ');
             var newWattageData = originalData.wattageData.split( ' ');
              
-            var dirNormalizer = (newData[color][0] * Number(linLength)) / Number(originalData.absLumen);
+            var dirNormalizer = newData[color][0] / Number(originalData.absLumen);
             // console.log(length)
             // console.log(color)
             // console.log(dirNormalizer)
@@ -298,34 +338,35 @@ function processFile(refPath,refIndPath,path,indPaths) {
               // var indAbsRatio = newData[indFileName[5].split('.')[0]][0] / (newData[indFileName[4]][0] + newData[indFileName[5].split('.')[0]][0]);
               // var partialAbs = Number(indData.absLumen) * indAbsRatio;
               // console.log(partialAbs)
-              var indNormalizer = (newIndData[indColor][0] * Number(linLength)) / Number(indData.absLumen);
+              var indNormalizer = newIndData[indColor][0] / Number(indData.absLumen);
               // console.log(indColor)
               // console.log(indNormalizer)
               // var indNormalizer = (Number(originalData.absLumen) * (newIndData[indColor][0] * Number(length)) / (newData[color][0] * Number(length))) / (Number(indData.absLumen));
             }
             // calculates configuration specific normalized indirect abs lumens to direct abs lumens per above
             
-            var combAbsLumens = newData[color][0] * Number(linLength);
+            var combAbsLumens = newData[color][0];
             if (indPaths.length>0) {
-              combAbsLumens += newIndData[indColor][0] * Number(linLength)
+              combAbsLumens += newIndData[indColor][0]
             }
             // calculates configuration specific overall file multiplier (IES toolbox) and sets in variable
             newFixtureData[2] = 1;
             // newFixtureData[2] = ((newData[color][0] * Number(length) + newIndData[indColor][0] * Number(length)) / combAbsLumens).toFixed(5);
 
             // calculates configuration specific total wattage and sets in variable
-            var combWattage = newData[color][1] * Number(linLength);
+            var combWattage = newData[color][1];
             if (indPaths.length>0) {
-              combWattage += newIndData[indColor][1] * Number(linLength)
+              combWattage += newIndData[indColor][1]
             }
             newWattageData[2] = combWattage.toFixed(1)
 
             // notes length and width dim location and delta of base files to config length
             // var dimsArray = lengthModifier(newFixtureData, originalFileName[1].substring(0,2), length);
-            var dimsArray = lengthModifier(newFixtureData, originalFileName[3].substring(0,1), length);
-            newFixtureData[dimsArray[(indPaths.length > 0 && indFileName[1] === "WHE" && originalFileName[1] !== "WHE" ? 1 : 0)]] = (Number(combFixtureData[dimsArray[0]]) - dimsArray[2]).toFixed(2);
+            // var dimsArray = lengthModifier(newFixtureData, originalFileName[3].substring(0,1), length);
+            // var dimsArray = lengthModifier(newFixtureData, originalFileName[3].substring(0,1), length);
+            // newFixtureData[dimsArray[(indPaths.length > 0 && indFileName[1] === "WHE" && originalFileName[1] !== "WHE" ? 1 : 0)]] = (Number(combFixtureData[dimsArray[0]]) - dimsArray[2]).toFixed(2);
             // newFixtureData[dimsArray[2]] = (Number(combFixtureData[dimsArray[2]]) - dimsArray[3]).toFixed(2);
-            newFixtureData[dimsArray[(indPaths.length > 0 && indFileName[1] === "WHE" && originalFileName[1] !== "WHE" ? 0 : 1)]] = Number(combFixtureData[dimsArray[1]]).toFixed(2);
+            // newFixtureData[dimsArray[(indPaths.length > 0 && indFileName[1] === "WHE" && originalFileName[1] !== "WHE" ? 0 : 1)]] = Number(combFixtureData[dimsArray[1]]).toFixed(2);
 
             // helper function to combine the direct and indirect candela data, all normalizers applied
             var dirMissingLumenM = 1
@@ -341,16 +382,18 @@ function processFile(refPath,refIndPath,path,indPaths) {
             }
 
             var combCandelaData = candelaCombiner(originalData.candelaData, indData.candelaData, dirNormalizer, indNormalizer, dirMissingLumenM, indMissingLumenM);
+            // console.log(combCandelaData)
             // sets base combined file name to be replaced on each config
             var biFileName = path.split('-')[0];
-            var oldFile = [biFileName,originalFileName[1],originalFileName[2],originalFileName[3].replace('.IES', '')]
+            // var oldFile = [biFileName,originalFileName[1],originalFileName[2],originalFileName[3].replace('.IES', '')]
+            var oldFile = [biFileName,originalFileName[1],originalFileName[2].replace('.IES', '')]
             // creates new combined file name
             if (indPaths.length>0) {
-              // var newFile = [biFileName,length+"DI",oldFile[2],indFileName[2],color,indColor];
-              var newFile = [biFileName+'I',oldFile[1],indFileName[1],color,indColor,length]
+              var newFile = [biFileName.replace("D", "DI"),oldFile[1],color,indColor];
+              // var newFile = [biFileName+'I',oldFile[1],indFileName[1],color,indColor,length]
             } else {
               // var newFile = [biFileName,length+"D",oldFile[2],color];
-              var newFile = [biFileName,oldFile[1],color,length]
+              var newFile = [biFileName,oldFile[1],color]
             }
             // configuration specific file content replacement
             var newText = combinedText
@@ -361,6 +404,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
             // adds file extension to combined file name
             var newFileName = newFile.join('-') + '.IES';
             // writes each file with content to output dir (if colors match per above)
+
             fs.writeFileSync(outputDir + '/' + newFileName, newText + combCandelaData);
           }
         }
@@ -402,12 +446,12 @@ function processCSV(csvPath, shield) {
       if (splitLine[shieldIndex] !== 'N/A') {
         var color = splitLine[0];
         outputObject[color] = [];
-        if (Number(splitLine[1]) > Number(splitLine[shieldIndex])) {
-          outputObject[color].push(Number(splitLine[1]));
+        if (Number(splitLine[shieldIndex+1]) > Number(splitLine[shieldIndex])) {
+          outputObject[color].push(Number(splitLine[shieldIndex+1]));
           outputObject[color].push(Number(splitLine[shieldIndex]));
         } else {
           outputObject[color].push(Number(splitLine[shieldIndex]));
-          outputObject[color].push(Number(splitLine[1]));
+          outputObject[color].push(Number(splitLine[shieldIndex+1]));
         }
       }
     }
@@ -415,7 +459,7 @@ function processCSV(csvPath, shield) {
   return outputObject;
 }
 
-// function for combining direct and indirect candela data
+// function for combining direct and indirect candela data and modifying all output data to match file
 function candelaCombiner(dirArr,indArr, dNorm, iNorm, dRep, iRep) {
   // cleans up the lines to remove extraneous spaces and newlines, then removes inverse hemisphere in proud lens applications
   var directC = fixLines(dirArr);
@@ -502,7 +546,7 @@ function candelaCombiner(dirArr,indArr, dNorm, iNorm, dRep, iRep) {
 
 // function to clean up the block of candela data, removing extra spaces and newlines
 function fixLines(arr) {
-  if (arr.length !== 5 && arr.length !== 16 && arr.length !== 9 && arr.length !== 11) {
+  if (arr.length !== 5 && arr.length !== 16 && arr.length !== 9 && arr.length !== 1) {
     var newArray = []
     var start
     arr.forEach((line,index) => {
@@ -561,6 +605,11 @@ function normalizeAngleQty(arr, ref) {
     if (ref===16 && arr.length===5 && ind!==2) {
       stretchedArr.push(elem)
       stretchedArr.push(elem)
+    }
+    if (arr.length===1) {
+      for (var i = 1; i < ref; i++) {
+        stretchedArr.push(elem)
+      }
     }
   })
   return stretchedArr
