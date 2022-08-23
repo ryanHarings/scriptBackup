@@ -197,7 +197,9 @@ function processFile(refPath,path) {
           //   console.log(Number(indData.absLumen) + dropLensIndDif, 'ind abs lumens plus dif')
           // }
           // writes each file with content to output dir (if colors match per above)
-          fs.writeFileSync(outputDir + '/' + newFileName, newText + combCandelaData);
+          if (originalFileName[0]==="L6DI" || originalFileName[0]==="L6DI" ? newWattageData[2] <= 104.8 : true) {
+            fs.writeFileSync(outputDir + '/' + newFileName, newText + combCandelaData);
+          }
         })
       }
     })

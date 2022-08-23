@@ -2,12 +2,12 @@ const fs = require('fs');
 const Path = require('path');
 
 // const lengths = ['22','44','11','33'];
-// const lengths = ['3']
+// const lengths = ['4']
 const lengths = ['2','3','4']
 
 const biAngles = '0 2.5 5 7.5 10 12.5 15 17.5 20 22.5 25 27.5 30 32.5 35 37.5 40 42.5 45 47.5 50 52.5 55 57.5 60 62.5 65 67.5 70 72.5 75 77.5 80 82.5 85 87.5 90 92.5 95 97.5 100 102.5 105 107.5 110 112.5 115 117.5 120 122.5 125 127.5 130 132.5 135 137.5 140 142.5 145 147.5 150 152.5 155 157.5 160 162.5 165 167.5 170 172.5 175 177.5 180'
 
-// const noteBody = {
+const noteBody = {
 //   Q3S: {
 //     d: '[LUMINAIRE]HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH AND A FABRICATED\r\n[MORE]METAL TOP HOUSING, FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD\r\n[MORE]MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED CLEAR FROSTED\r\n[MORE]FLAT PLASTIC LENS. LENSES FROSTED BOTH SIDES. OPEN CENTER.',
 //     di: '[LUMINAIRE]HOUSING WITH SIDES CONSISTING OF: EXTRUDED METAL\r\n[MORE]HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH AND 2 DISTINCT OPTICAL\r\n[MORE]COMPARTMENTS, TOP OPTICAL COMPARTMENT CONSIST OF: FORMED WHITE PAINTED\r\n[MORE]METAL REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36\r\n[MORE]LEDS, EXTRUDED CLEAR FROSTED DROP PLASTIC LENS. BOTTOM OPTICAL\r\n[MORE]COMPARTMENT CONSISTS OF: FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT\r\n[MORE]BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED CLEAR\r\n[MORE]FROSTED FLAT PLASTIC LENS. OPEN CENTER.'
@@ -15,7 +15,8 @@ const biAngles = '0 2.5 5 7.5 10 12.5 15 17.5 20 22.5 25 27.5 30 32.5 35 37.5 40
 //   Q3R: {
 //     d: '[LUMINAIRE]HOUSING WITH EACH SIDE CONSISTING OF: FABRICATED METAL\r\n[MORE]HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH, FORMED WHITE PAINTED\r\n[MORE]METAL REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36\r\n[MORE]LEDS, EXTRUDED TRANSLUCENT WHITE FROSTED FLAT PLASTIC LENS. LENSES\r\n[MORE]FROSTED BOTH SIDES. OPEN CENTER. EACH OPTICAL COMPARTMENT\r\n[MORE]CIRCUIT BOARD MOUNT HAS OVERLAPPING SECTIONS. THIS CONFIGURATION HAS A\r\n[MORE]TOTAL OF 24 OF THE ENERGIZED LEDS PROVIDING MINIMAL CONTRIBUTION TO THE\r\n[MORE]TOTAL LIGHT OUTPUT.'
 //   },
-//   EX2D: {
+  EX2D: {
+    di: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, FORMED WHITE PAINTED METAL\r\n[MORE]REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36 LEDS,\r\n[MORE]EXTRUDED PLASTIC REFLECTOR/LENS ASSEMBLY WITH WHITE REFLECTOR AND A\r\n[MORE]FROSTED CLEAR LINEAR PRISMATIC LENS. LENS FROSTED BOTH SIDES WITH PRISMS\r\n[MORE]IN AND PARALLEL WITH LENGTH OF HOUSING. TOP OPTICAL COMPARTMENT CONSISTS\r\n[MORE]OF FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT,\r\n[MORE]WHITE CIRCUIT BOARDS EACH WITH 36 LEDS, MULTI-PIECE FROSTED LINEAR\r\n[MORE]PRISMATIC PLASTIC LENS. LENS WITH PRISMS OUT AND FROSTED BOTH SIDES.'
 //     d: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, FORMED WHITE PAINTED METAL\r\n[MORE]REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36 LEDS,\r\n[MORE]EXTRUDED PLASTIC REFLECTOR/LENS ASSEMBLY WITH WHITE REFLECTOR AND A\r\n[MORE]TRANSLUCENT WHITE FROSTED PRISMATIC DIFFUSER. DIFFUSER FROSTED BOTH\r\n[MORE]SIDES.',
 //     di: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, TOP OPTICAL COMPARTMENT CONSISTS\r\n[MORE]OF FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT, WHITE\r\n[MORE]CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED PLASTIC REFLECTOR/LENS\r\n[MORE]ASSEMBLY WITH WHITE REFLECTOR AND A TRANSLUCENT WHITE FROSTED PRISMATIC\r\n[MORE]DIFFUSER. DIFFUSER FROSTED BOTH SIDES. TOP OPTICAL COMPARTMENT CONSISTS\r\n[MORE]OF FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT, WHITE\r\n[MORE]CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED TRANSLUCENT FROSTED PLASTIC\r\n[MORE]DIFFUSER. DIFFUSER FROSTED BOTH SIDES.'
 //   },
@@ -24,11 +25,14 @@ const biAngles = '0 2.5 5 7.5 10 12.5 15 17.5 20 22.5 25 27.5 30 32.5 35 37.5 40
 //   },
 //   EV2D: {
 //     d: '[LUMINAIRE]FABRICATED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR\r\n[MORE]FINISH, FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT,\r\n[MORE]WHITE CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED PLASTIC REFLECTOR/LENS\r\n[MORE]ASSEMBLY WITH WHITE REFLECTOR AND A TRANSLUCENT WHITE FROSTED DIFFUSER.\r\n[MORE]DIFFUSER FROSTED BOTH SIDES.'
-//   },
-//   EX4D: {
+  },
+  EX3D: {
+    di: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, FORMED WHITE PAINTED METAL\r\n[MORE]REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36 LEDS,\r\n[MORE]EXTRUDED PLASTIC REFLECTOR/LENS ASSEMBLY WITH WHITE REFLECTOR AND A\r\n[MORE]FROSTED CLEAR LINEAR PRISMATIC LENS. LENS FROSTED BOTH SIDES WITH PRISMS\r\n[MORE]IN AND PARALLEL WITH LENGTH OF HOUSING. TOP OPTICAL COMPARTMENT CONSISTS\r\n[MORE]OF FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT,\r\n[MORE]WHITE CIRCUIT BOARDS EACH WITH 36 LEDS, MULTI-PIECE FROSTED LINEAR\r\n[MORE]PRISMATIC PLASTIC LENS. LENS WITH PRISMS OUT AND FROSTED BOTH SIDES.'
+  },
+  EX4D: {
 //     d: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, FORMED WHITE PAINTED METAL\r\n[MORE]REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36 LEDS,\r\n[MORE]EXTRUDED PLASTIC REFLECTOR/LENS ASSEMBLY WITH WHITE REFLECTOR AND A\r\n[MORE]TRANSLUCENT WHITE FROSTED PRISMATIC DIFFUSER. DIFFUSER FROSTED BOTH\r\n[MORE]SIDES.',
-//     di: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, TOP OPTICAL COMPARTMENT CONSISTS\r\n[MORE]OF FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT, WHITE\r\n[MORE]CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED PLASTIC REFLECTOR/LENS\r\n[MORE]ASSEMBLY WITH WHITE REFLECTOR AND A TRANSLUCENT WHITE FROSTED PRISMATIC\r\n[MORE]DIFFUSER. DIFFUSER FROSTED BOTH SIDES. TOP OPTICAL COMPARTMENT CONSISTS\r\n[MORE]OF FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT, WHITE\r\n[MORE]CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED TRANSLUCENT FROSTED PLASTIC\r\n[MORE]DIFFUSER. DIFFUSER FROSTED BOTH SIDES.'
-//   },
+    di: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, FORMED WHITE PAINTED METAL\r\n[MORE]REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36 LEDS,\r\n[MORE]EXTRUDED PLASTIC REFLECTOR/LENS ASSEMBLY WITH WHITE REFLECTOR AND A\r\n[MORE]FROSTED CLEAR LINEAR PRISMATIC LENS. LENS FROSTED BOTH SIDES WITH PRISMS\r\n[MORE]IN AND PARALLEL WITH LENGTH OF HOUSING. TOP OPTICAL COMPARTMENT CONSISTS\r\n[MORE]OF FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT,\r\n[MORE]WHITE CIRCUIT BOARDS EACH WITH 36 LEDS, MULTI-PIECE FROSTED LINEAR\r\n[MORE]PRISMATIC PLASTIC LENS. LENS WITH PRISMS OUT AND FROSTED BOTH SIDES.'
+  }
 //   EX4I: {
 //     d: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, FORMED WHITE PAINTED METAL\r\n[MORE]REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36\r\n[MORE]LEDS, EXTRUDED TRANSLUCENT FROSTED PLASTIC DIFFUSER. DIFFUSER FROSTED\r\n[MORE]BOTH SIDES.'
 //   },
@@ -37,35 +41,67 @@ const biAngles = '0 2.5 5 7.5 10 12.5 15 17.5 20 22.5 25 27.5 30 32.5 35 37.5 40
 //     d: '[LUMINAIRE]FABRICATED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR\r\n[MORE]FINISH, FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT,\r\n[MORE]WHITE CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED PLASTIC REFLECTOR/LENS\r\n[MORE]ASSEMBLY WITH WHITE REFLECTOR AND A TRANSLUCENT WHITE FROSTED DIFFUSER.\r\n[MORE]DIFFUSER FROSTED BOTH SIDES.'
 //   }
 
-// }
+}
 
 const missingLumenMult = {
+  CD: {
+    A: 1.034
+  },
+  CI: {
+    BW: 1 //.603
+  },
   EX2D: {
-    AL: 1.208,
-    HED: 1.011
+    A: 1,
+    AL: 1.19, // <-whe mult, non-whe -> 1.21,
+    BW: 1.0,
+    HE: 1.0,
+    HED: 1.0, //1.011
+    WHE: 1.0
   },
   EX2I: {
-    BW: 1.001,
-    HEA: 1.025,
-    WHE: 1.0
+    BW: 1.0, //1.001,
+    HEA: 1.0, //1.025,
+    WHE: 1.01
   },
   EX3D: {
-    AL: 1.16,
-    HED: 1.01
+    A: 1,
+    AL: 1.1215, // 1.132, //1.1215, //good?
+    BW: .988, //.988, //.977,
+    HE: 1.00, //1.015,
+    HED: 1.0, //1.009 //good?
+    WHE: 1. //1.044 // 1.044
   },
+  // AL-HEA: 1.131-1.021
+  // AL-WHE: 1.11-1
   EX3I: {
-    BW: 1.0,
-    HEA: 1.018,
-    WHE: 1.0
+    BW: 1,
+    HEA: 1.0,
+    WHE: 1
   },
   EX4D: {
-    AL: 1.125,
-    HED: 1.01
+    A: 1,
+    AL: 1.13,
+    BW: 1.0, //.999, //.99, //.995
+    HE: 1.0, //.998,
+    HED: 1.0, //1.005,
+    WHE: 1.0 //1.005
   },
   EX4I: {
     BW: 1.0,
-    HEA: 1.011,
-    WHE: 1.001
+    HEA: 1.0, //1.010,
+    WHE: 1.0 //1.01
+  },
+  L6D: {
+    A: 1
+  },
+  L6I: {
+    BW: 1.002
+  },
+  L8D: {
+    A: 1
+  },
+  L8I: {
+    BW: 1.002
   }
 }
 
@@ -146,12 +182,12 @@ function processFile(refPath,refIndPath,path,indPaths) {
   var indexTrace;
   // loop through each line of direct body and set data or change verbiage
   originalText.forEach((line, index) => {
-    if (line.includes('[LUMINAIRE]')) {
-      // while (originalText[index + 1].includes('[MORE]')) {
-        // originalText.splice(index + 1, 1)
-      // }
-      // var bodyText = noteBody[originalFileName[0]]
-      // originalText[index] = bodyText[(indPaths.length>0 ? 'di' : 'd')];
+    if (line.includes('[LUMINAIRE]') && (originalFileName[0]==='EX3D' || originalFileName[0]==='EX4D') && indPaths.length>0) {
+      while (originalText[index + 1].includes('[MORE]')) {
+        originalText.splice(index + 1, 1)
+      }
+      var bodyText = noteBody[originalFileName[0]]
+      originalText[index] = bodyText['di'];
     } else if (line.includes('[LAMP]')) {
       if (originalText[index + 1].includes('[MORE]')) {
         originalText.splice(index + 1, 1);
@@ -179,7 +215,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
         originalText.splice(index + 1, 1)
       } 
       originalText[index] = originalData.endAngles
-    } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 5 || line.split(' ').length === 16 || line.split(' ').length === 9 || line.split(' ').length === 11)) {
+    } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 5 || line.split(' ').length === 16 || line.split(' ').length === 9 || line.split(' ').length === 11 || line.split(' ').length === 73)) {
       originalData.candelaData.splice(0, originalData.candelaData.length);
       originalData.deleteLines.splice(0, originalData.deleteLines.length);
       originalData.topAngles = line;
@@ -245,7 +281,6 @@ function processFile(refPath,refIndPath,path,indPaths) {
         }
       });
     }
-
     // combines/replaces fixture data to establish combined base file content
     var combFixtureData = originalData.fixtureData.split(' ');
     // diode qty
@@ -259,8 +294,11 @@ function processFile(refPath,refIndPath,path,indPaths) {
     // checks if top angle qty is equal, sets the largest qty if not
     var combTopAngles = indPaths.length>0 && originalData.topAngles.length < indData.topAngles.length ? indData.topAngles : originalData.topAngles
     // combines text to establish base file content, common base info (no configuration variables)
+    console.log(originalData.topAngles)
+
     var combinedText = originalText.join('\r\n')
       .replace('[TEST]ITL','[TEST]SCALED FROM ITL')
+      .replace('[TEST]','[TEST]SCALED FROM')
       .replace('-GONIOPHOTOMETRY',indPaths.length>0 ? ' & ' + indData.test : '')
       .replace('-GONIOPHOTOMETRY','')
       // .replace('-' + originalFileName[2], '-' + 'test')
@@ -332,13 +370,15 @@ function processFile(refPath,refIndPath,path,indPaths) {
             var indMissingLumenM = 1
 
             if (indPaths.length>0) {
-              if (originalFileName[1] === "AL" || originalFileName[1] === "HED") {
+              // if (originalFileName[1] === "AL" || originalFileName[1] === "BW" || originalFileName[1] === "HE" || originalFileName[1] === "HED" || originalFileName[1] === "WHE") {
+              if (originalFileName[1]) {
                 dirMissingLumenM = missingLumenMult[originalFileName[0]][originalFileName[1]]
               }
-              if (indFileName[1] === "HEA" || indFileName[1] === "BW" || (indFileName[1]==="WHE" && indFileName[0]==="EX4I")) {
+              if (indFileName[1] === "HEA" || indFileName[1] === "BW" || (indFileName[1]==="WHE" && (indFileName[0]==="EX4I" || indFileName[0]==="EX3I" || indFileName[0]==="L6I" || indFileName[0]==="L8I"))) {
                 indMissingLumenM = missingLumenMult[indFileName[0]][indFileName[1]]
               }
             }
+            // console.log(dirMissingLumenM)
 
             var combCandelaData = candelaCombiner(originalData.candelaData, indData.candelaData, dirNormalizer, indNormalizer, dirMissingLumenM, indMissingLumenM);
             // sets base combined file name to be replaced on each config
@@ -417,14 +457,34 @@ function processCSV(csvPath, shield) {
 
 // function for combining direct and indirect candela data
 function candelaCombiner(dirArr,indArr, dNorm, iNorm, dRep, iRep) {
+  // console.log(dirArr)
+  // console.log(indArr)
+
   // cleans up the lines to remove extraneous spaces and newlines, then removes inverse hemisphere in proud lens applications
   var directC = fixLines(dirArr);
   var indirectC = fixLines(indArr);
+
+  // console.log(directC)
+
+  if (directC.length === 9 && indirectC.length === 5) {
+    // console.log(indirectC)
+    var revInd = indirectC.slice().reverse().slice(0,-1)
+    indirectC = revInd.concat(indirectC)
+    // console.log(indirectC)
+  }
+  
+  if (directC.length === 5 && indirectC.length === 16) {
+    // console.log(directC)
+    var revDir = directC.slice().reverse().slice(0,-1)
+    directC = revDir.concat(directC)
+    // console.log(directC)
+  }
 
   // ensures the same number of angle measurements exist by configuration
   if (directC.length < indirectC.length) {
     // directC = normalizeAngleQty(directC.reverse(), indirectC.length);
     directC = normalizeAngleQty(directC, indirectC.length);
+    // console.log(directC)
   } else if (indirectC.length < directC.length) {
     // indirectC = normalizeAngleQty(indirectC.reverse(), directC.length);
     indirectC = normalizeAngleQty(indirectC, directC.length);
@@ -453,10 +513,16 @@ function candelaCombiner(dirArr,indArr, dNorm, iNorm, dRep, iRep) {
       // dirRep = 1 + dirMissing/dirTotal
       // console.log(dirRep)
     // }
-
+    // console.log(dRep)
     splitD = splitD.map(cand=>{
+      // if (index < 36 && fixtPn.charAt(0)==="E" && fixtPn.split('').pop()==='I') {
+      //   return 0;
+      // } else {
       return (Number(cand)*dNorm*dRep).toFixed(1);
+      // }
     });
+
+    // console.log(splitD)
 
     let splitI
     if (indirectC.length !== 0) {
@@ -502,7 +568,7 @@ function candelaCombiner(dirArr,indArr, dNorm, iNorm, dRep, iRep) {
 
 // function to clean up the block of candela data, removing extra spaces and newlines
 function fixLines(arr) {
-  if (arr.length !== 5 && arr.length !== 16 && arr.length !== 9 && arr.length !== 11) {
+  if (arr.length !== 5 && arr.length !== 16 && arr.length !== 9 && arr.length !== 11 && arr.length!= 73) {
     var newArray = []
     var start
     arr.forEach((line,index) => {
@@ -552,6 +618,8 @@ function removeInvHem(line) {
 // }
 
 function normalizeAngleQty(arr, ref) {
+  console.log(arr)
+  console.log(arr.length)
   var stretchedArr = [];
   arr.forEach((elem,ind) => {
     stretchedArr.push(elem)
@@ -563,6 +631,8 @@ function normalizeAngleQty(arr, ref) {
       stretchedArr.push(elem)
     }
   })
+  // console.log(arr)
+  // console.log(stretchedArr)
   return stretchedArr
 }
 // function to add the missing candela to remaining candela

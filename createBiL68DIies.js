@@ -74,7 +74,7 @@ function processFile(refPath,path) {
       if (originalText[index + 1].includes('[MORE]')) {
         originalText.splice(index + 1, 1);
       }
-      originalText[index] = '[LAMP]TWO HUNDRED EIGHTY-EIGHT WHITE LIGHT EMITTING DIODES (LEDS), 144 VERTICAL\r\n[MORE]BASE-UP POSITION, 144 TILTED 10-DEGREES FROM VERTICAL BASE-DOWN POSITION.'
+      //originalText[index] = '[LAMP]TWO HUNDRED EIGHTY-EIGHT WHITE LIGHT EMITTING DIODES (LEDS), 144 VERTICAL\r\n[MORE]BASE-UP POSITION, 144 TILTED 10-DEGREES FROM VERTICAL BASE-DOWN POSITION.'
     } else if (line.includes('_INPUT_ELECTRICAL')) {
       originalText.splice(index, 1)
       var removeInd = index
@@ -195,7 +195,9 @@ function processFile(refPath,path) {
           //   console.log(Number(indData.absLumen) + dropLensIndDif, 'ind abs lumens plus dif')
           // }
           // writes each file with content to output dir (if colors match per above)
-          fs.writeFileSync(outputDir + '/' + newFileName, newText + combCandelaData);
+          if (newWattageData[2] < 26.2 * length) {
+            fs.writeFileSync(outputDir + '/' + newFileName, newText + combCandelaData);
+          }
         })
       }
     })
