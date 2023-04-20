@@ -1,15 +1,13 @@
-//for use with Bi FND and LFD
-
 const fs = require('fs');
 const Path = require('path');
 
 // const lengths = ['22','44','11','33'];
-// const lengths = ['3']
+const lengths = ['1']
 // const lengths = ['2','3','4']
 
 const biAngles = '0 2.5 5 7.5 10 12.5 15 17.5 20 22.5 25 27.5 30 32.5 35 37.5 40 42.5 45 47.5 50 52.5 55 57.5 60 62.5 65 67.5 70 72.5 75 77.5 80 82.5 85 87.5 90 92.5 95 97.5 100 102.5 105 107.5 110 112.5 115 117.5 120 122.5 125 127.5 130 132.5 135 137.5 140 142.5 145 147.5 150 152.5 155 157.5 160 162.5 165 167.5 170 172.5 175 177.5 180'
 
-// const noteBody = {
+const noteBody = {
 //   Q3S: {
 //     d: '[LUMINAIRE]HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH AND A FABRICATED\r\n[MORE]METAL TOP HOUSING, FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD\r\n[MORE]MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED CLEAR FROSTED\r\n[MORE]FLAT PLASTIC LENS. LENSES FROSTED BOTH SIDES. OPEN CENTER.',
 //     di: '[LUMINAIRE]HOUSING WITH SIDES CONSISTING OF: EXTRUDED METAL\r\n[MORE]HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH AND 2 DISTINCT OPTICAL\r\n[MORE]COMPARTMENTS, TOP OPTICAL COMPARTMENT CONSIST OF: FORMED WHITE PAINTED\r\n[MORE]METAL REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36\r\n[MORE]LEDS, EXTRUDED CLEAR FROSTED DROP PLASTIC LENS. BOTTOM OPTICAL\r\n[MORE]COMPARTMENT CONSISTS OF: FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT\r\n[MORE]BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED CLEAR\r\n[MORE]FROSTED FLAT PLASTIC LENS. OPEN CENTER.'
@@ -17,7 +15,8 @@ const biAngles = '0 2.5 5 7.5 10 12.5 15 17.5 20 22.5 25 27.5 30 32.5 35 37.5 40
 //   Q3R: {
 //     d: '[LUMINAIRE]HOUSING WITH EACH SIDE CONSISTING OF: FABRICATED METAL\r\n[MORE]HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH, FORMED WHITE PAINTED\r\n[MORE]METAL REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36\r\n[MORE]LEDS, EXTRUDED TRANSLUCENT WHITE FROSTED FLAT PLASTIC LENS. LENSES\r\n[MORE]FROSTED BOTH SIDES. OPEN CENTER. EACH OPTICAL COMPARTMENT\r\n[MORE]CIRCUIT BOARD MOUNT HAS OVERLAPPING SECTIONS. THIS CONFIGURATION HAS A\r\n[MORE]TOTAL OF 24 OF THE ENERGIZED LEDS PROVIDING MINIMAL CONTRIBUTION TO THE\r\n[MORE]TOTAL LIGHT OUTPUT.'
 //   },
-//   EX2D: {
+  EX2D: {
+    di: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, FORMED WHITE PAINTED METAL\r\n[MORE]REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36 LEDS,\r\n[MORE]EXTRUDED PLASTIC REFLECTOR/LENS ASSEMBLY WITH WHITE REFLECTOR AND A\r\n[MORE]FROSTED CLEAR LINEAR PRISMATIC LENS. LENS FROSTED BOTH SIDES WITH PRISMS\r\n[MORE]IN AND PARALLEL WITH LENGTH OF HOUSING. TOP OPTICAL COMPARTMENT CONSISTS\r\n[MORE]OF FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT,\r\n[MORE]WHITE CIRCUIT BOARDS EACH WITH 36 LEDS, MULTI-PIECE FROSTED LINEAR\r\n[MORE]PRISMATIC PLASTIC LENS. LENS WITH PRISMS OUT AND FROSTED BOTH SIDES.'
 //     d: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, FORMED WHITE PAINTED METAL\r\n[MORE]REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36 LEDS,\r\n[MORE]EXTRUDED PLASTIC REFLECTOR/LENS ASSEMBLY WITH WHITE REFLECTOR AND A\r\n[MORE]TRANSLUCENT WHITE FROSTED PRISMATIC DIFFUSER. DIFFUSER FROSTED BOTH\r\n[MORE]SIDES.',
 //     di: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, TOP OPTICAL COMPARTMENT CONSISTS\r\n[MORE]OF FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT, WHITE\r\n[MORE]CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED PLASTIC REFLECTOR/LENS\r\n[MORE]ASSEMBLY WITH WHITE REFLECTOR AND A TRANSLUCENT WHITE FROSTED PRISMATIC\r\n[MORE]DIFFUSER. DIFFUSER FROSTED BOTH SIDES. TOP OPTICAL COMPARTMENT CONSISTS\r\n[MORE]OF FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT, WHITE\r\n[MORE]CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED TRANSLUCENT FROSTED PLASTIC\r\n[MORE]DIFFUSER. DIFFUSER FROSTED BOTH SIDES.'
 //   },
@@ -26,11 +25,14 @@ const biAngles = '0 2.5 5 7.5 10 12.5 15 17.5 20 22.5 25 27.5 30 32.5 35 37.5 40
 //   },
 //   EV2D: {
 //     d: '[LUMINAIRE]FABRICATED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR\r\n[MORE]FINISH, FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT,\r\n[MORE]WHITE CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED PLASTIC REFLECTOR/LENS\r\n[MORE]ASSEMBLY WITH WHITE REFLECTOR AND A TRANSLUCENT WHITE FROSTED DIFFUSER.\r\n[MORE]DIFFUSER FROSTED BOTH SIDES.'
-//   },
-//   EX4D: {
+  },
+  EX3D: {
+    di: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, FORMED WHITE PAINTED METAL\r\n[MORE]REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36 LEDS,\r\n[MORE]EXTRUDED PLASTIC REFLECTOR/LENS ASSEMBLY WITH WHITE REFLECTOR AND A\r\n[MORE]FROSTED CLEAR LINEAR PRISMATIC LENS. LENS FROSTED BOTH SIDES WITH PRISMS\r\n[MORE]IN AND PARALLEL WITH LENGTH OF HOUSING. TOP OPTICAL COMPARTMENT CONSISTS\r\n[MORE]OF FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT,\r\n[MORE]WHITE CIRCUIT BOARDS EACH WITH 36 LEDS, MULTI-PIECE FROSTED LINEAR\r\n[MORE]PRISMATIC PLASTIC LENS. LENS WITH PRISMS OUT AND FROSTED BOTH SIDES.'
+  },
+  EX4D: {
 //     d: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, FORMED WHITE PAINTED METAL\r\n[MORE]REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36 LEDS,\r\n[MORE]EXTRUDED PLASTIC REFLECTOR/LENS ASSEMBLY WITH WHITE REFLECTOR AND A\r\n[MORE]TRANSLUCENT WHITE FROSTED PRISMATIC DIFFUSER. DIFFUSER FROSTED BOTH\r\n[MORE]SIDES.',
-//     di: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, TOP OPTICAL COMPARTMENT CONSISTS\r\n[MORE]OF FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT, WHITE\r\n[MORE]CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED PLASTIC REFLECTOR/LENS\r\n[MORE]ASSEMBLY WITH WHITE REFLECTOR AND A TRANSLUCENT WHITE FROSTED PRISMATIC\r\n[MORE]DIFFUSER. DIFFUSER FROSTED BOTH SIDES. TOP OPTICAL COMPARTMENT CONSISTS\r\n[MORE]OF FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT, WHITE\r\n[MORE]CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED TRANSLUCENT FROSTED PLASTIC\r\n[MORE]DIFFUSER. DIFFUSER FROSTED BOTH SIDES.'
-//   },
+    di: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, FORMED WHITE PAINTED METAL\r\n[MORE]REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36 LEDS,\r\n[MORE]EXTRUDED PLASTIC REFLECTOR/LENS ASSEMBLY WITH WHITE REFLECTOR AND A\r\n[MORE]FROSTED CLEAR LINEAR PRISMATIC LENS. LENS FROSTED BOTH SIDES WITH PRISMS\r\n[MORE]IN AND PARALLEL WITH LENGTH OF HOUSING. TOP OPTICAL COMPARTMENT CONSISTS\r\n[MORE]OF FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT,\r\n[MORE]WHITE CIRCUIT BOARDS EACH WITH 36 LEDS, MULTI-PIECE FROSTED LINEAR\r\n[MORE]PRISMATIC PLASTIC LENS. LENS WITH PRISMS OUT AND FROSTED BOTH SIDES.'
+  }
 //   EX4I: {
 //     d: '[LUMINAIRE]EXTRUDED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH\r\n[MORE]AND CAST WHITE PAINTED METAL END CAPS, FORMED WHITE PAINTED METAL\r\n[MORE]REFLECTOR/CIRCUIT BOARD MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36\r\n[MORE]LEDS, EXTRUDED TRANSLUCENT FROSTED PLASTIC DIFFUSER. DIFFUSER FROSTED\r\n[MORE]BOTH SIDES.'
 //   },
@@ -39,62 +41,73 @@ const biAngles = '0 2.5 5 7.5 10 12.5 15 17.5 20 22.5 25 27.5 30 32.5 35 37.5 40
 //     d: '[LUMINAIRE]FABRICATED METAL HOUSING WITH WHITE PAINTED GENERAL INTERIOR\r\n[MORE]FINISH, FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD MOUNT,\r\n[MORE]WHITE CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED PLASTIC REFLECTOR/LENS\r\n[MORE]ASSEMBLY WITH WHITE REFLECTOR AND A TRANSLUCENT WHITE FROSTED DIFFUSER.\r\n[MORE]DIFFUSER FROSTED BOTH SIDES.'
 //   }
 
-// }
+}
 
 const missingLumenMult = {
+  CD: {
+    A: 1.034
+  },
+  CI: {
+    BW: 1 //.603
+  },
   EX2D: {
-    AL: 1.208,
-    HED: 1.011
+    A: 1,
+    AL: 1.19, // <-whe mult, non-whe -> 1.21,
+    BW: 1.0,
+    HE: 1.0,
+    HED: 1.0, //1.011
+    WHE: 1.0
   },
   EX2I: {
-    BW: 1.001,
-    HEA: 1.025,
-    WHE: 1.0
+    BW: 1.0, //1.001,
+    HEA: 1.0, //1.025,
+    WHE: 1.01
   },
   EX3D: {
-    AL: 1.16,
-    HED: 1.01
+    A: 1,
+    AL: 1.1215, // 1.132, //1.1215, //good?
+    BW: .988, //.988, //.977,
+    HE: 1.00, //1.015,
+    HED: 1.0, //1.009 //good?
+    WHE: 1. //1.044 // 1.044
   },
+  // AL-HEA: 1.131-1.021
+  // AL-WHE: 1.11-1
   EX3I: {
-    BW: 1.0,
-    HEA: 1.018,
-    WHE: 1.0
+    BW: 1,
+    HEA: 1.0,
+    WHE: 1
   },
   EX4D: {
-    AL: 1.125,
-    HED: 1.01
+    A: 1,
+    AL: 1.13,
+    BW: 1.0, //.999, //.99, //.995
+    HE: 1.0, //.998,
+    HED: 1.0, //1.005,
+    WHE: 1.0 //1.005
   },
   EX4I: {
     BW: 1.0,
-    HEA: 1.011,
-    WHE: 1.001
+    HEA: 1.0, //1.010,
+    WHE: 1.0 //1.01
   },
-  LF14D: {
-    AL: 1.04
+  L6D: {
+    A: 1
   },
-  LF22D: {
-    AL: 1.0203
+  L6I: {
+    BW: 1.002
   },
-  LF24D: {
-    AL: 1.02773
+  L8D: {
+    A: 1
   },
-  LF44D: {
-    AL: 1.0112
-  },
-  F24D: {
-    AL: 1.0184
-  },
-  F36D: {
-    AL: 1.0136
-  },
-  F48D: {
-    AL: 1.0124
+  L8I: {
+    BW: 1.002
   }
 }
 
 function buildTree() {
   fs.readdir('./', (err, entries) => {
-    // find all file names
+    //find all file names
     var refPath;
     var refIndPath;
     var indPaths = [];
@@ -102,7 +115,7 @@ function buildTree() {
     entries.forEach((refFile) => {
       const path = Path.join('./', refFile);
       // if (path.match(/\.csv/)) {
-      if (path.match(/.csv/)) {
+      if (path.match(/A.csv/) || path.match(/D.csv/) || path.match(/LU.csv/)) {
         refPath = path;
       } else if (path.match(/I\.csv/)) {
         refIndPath = path;
@@ -111,7 +124,6 @@ function buildTree() {
       }
     });
     if (refPath === undefined && refIndPath !== undefined) {
-      console.log('here')
       refPath = refIndPath;
       indPaths = []
       var refIndPath
@@ -119,13 +131,12 @@ function buildTree() {
 
     console.log('Files:');
     console.log("Direct reference: ", refPath);
-    console.log("Indirect referece: ", refIndPath);
+    console.log("Indirect reference: ", refIndPath);
     console.log("Indirect files: ", indPaths);
     //loops through all IES files in current directory
     entries.forEach((file) => {
       const path = Path.join('./', file);
-      // console.log(path.split('-')[0].match(/I/))
-      if ((path.split('-')[0].match(/D/) || (path.split('-')[0].match(/I/) && indPaths.length === 0)) && (file.match(/\.IES$/) || file.match(/\.ies$/))) {
+      if ((path.split('-')[0].match(/D/) || path.split('-')[0].match(/LU/) || (path.split('-')[0].match(/I/) && indPaths.length === 0) || path.split('-')[0].match(/M/)) && (file.match(/\.IES$/) || file.match(/\.ies$/))) {
         console.log("Direct file: ", path);
         processFile(refPath,refIndPath,path,indPaths);
       }
@@ -155,12 +166,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
 
   const originalFileName = path.split('-');
   // select appropriate direct output data per shielding
-  const newData = processCSV(refPath,originalFileName[0].includes("LF") ? originalFileName[0].substring(2,4) : originalFileName[0].substring(1,3));
-  
-  const noteBody = {
-    F: '[LUMINAIRE]FABRICATED WHITE PAINTED METAL HOUSING; DIRECT: WHITE PAINTED\r\n[MORE]FLAT METAL REFLECTOR/CIRCUIT BOARD MOUNT, 1 WHITE CIRCUIT BOARD WITH 126 LEDS,'+ (originalFileName[0].includes("24") ? "" : '\r\n[MORE]6 WHITE CIRCUIT BOARDS EACH WITH 33 LEDS, ')+(originalFileName[0].includes("48") ? '6 WHITE CIRCUIT BOARDS EACH WITH 50 LEDS,' : "") +'\r\n[MORE]TRANSLUCENT WHITE FROSTED FLAT PLASTIC DIFFUSER, DIFFUSER FROSTED BOTH SIDES;\r\n[MORE]INDIRECT: FORMED WHITE PAINTED METAL DRIVER HOUSING, '+(originalFileName[0].includes("48") ? 12 : originalFileName[0].includes("36") ? 8 : 4)+' WHITE\r\n[MORE]CIRCUIT BOARDS EACH WITH 36 LEDS, CLEAR FLAT PLASTIC TOP LENS.',  
-    L: '[LUMINAIRE]FABRICATED WHITE PAINTED METAL HOUSING; DIRECT: WHITE PAINTED\r\n[MORE]FLAT METAL REFLECTOR/CIRCUIT BOARD MOUNT, '+(originalFileName[0].includes("44") ? 16 : originalFileName[0].includes("24") ? 8 : 4)+' WHITE CIRCUIT BOARDS EACH WITH 100 LEDS,\r\n[MORE]TRANSLUCENT WHITE FROSTED FLAT PLASTIC DIFFUSER, DIFFUSER FROSTED BOTH SIDES;\r\n[MORE]INDIRECT: FORMED WHITE PAINTED METAL DRIVER HOUSING, '+(originalFileName[0].includes("44") ? 12 : originalFileName[0].includes("24") ? 8 : 4)+' WHITE CIRCUIT BOARDS EACH\r\n[MORE]WITH 36 LEDS, CLEAR FLAT PLASTIC TOP LENS.'
-  }
+  const newData = processCSV(refPath, originalFileName[0].substring(0,2)==="AD" || originalFileName[0].substring(0,2)==="LU"? originalFileName[0] : originalFileName[1]);
 
   // variable for body data
   const originalData = {
@@ -176,11 +182,12 @@ function processFile(refPath,refIndPath,path,indPaths) {
   var indexTrace;
   // loop through each line of direct body and set data or change verbiage
   originalText.forEach((line, index) => {
-    if (line.includes('[LUMINAIRE]')) {
+    if (line.includes('[LUMINAIRE]') && (originalFileName[0]==='EX3D' || originalFileName[0]==='EX4D') && indPaths.length>0) {
       while (originalText[index + 1].includes('[MORE]')) {
         originalText.splice(index + 1, 1)
       }
-      originalText[index] = noteBody[originalFileName[0].charAt(0)];
+      var bodyText = noteBody[originalFileName[0]]
+      originalText[index] = bodyText['di'];
     } else if (line.includes('[LAMP]')) {
       if (originalText[index + 1].includes('[MORE]')) {
         originalText.splice(index + 1, 1);
@@ -208,13 +215,10 @@ function processFile(refPath,refIndPath,path,indPaths) {
         originalText.splice(index + 1, 1)
       } 
       originalText[index] = originalData.endAngles
-    } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 5 || line.split(' ').length === 16 || line.split(' ').length === 9 || line.split(' ').length === 1)) {
+    } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 5 || line.split(' ').length === 16 || line.split(' ').length === 9 || line.split(' ').length === 11 || line.split(' ').length === 73)) {
       originalData.candelaData.splice(0, originalData.candelaData.length);
       originalData.deleteLines.splice(0, originalData.deleteLines.length);
       originalData.topAngles = line;
-      if (originalData.topAngles.length === 1) {
-        originalData.deleteLines.push(index)
-      }
     } else if (index > indexTrace && index < originalText.length - 1) {
       originalData.candelaData.push(line);
       originalData.deleteLines.push(index)
@@ -247,8 +251,8 @@ function processFile(refPath,refIndPath,path,indPaths) {
       indText = fs.readFileSync(indP, 'utf8').split(/\r?\n/);
       indFileName = indP.split('-');
       // selects appropriate indirect output data per shielding
-      newIndData = processCSV(refIndPath,indFileName[0].includes("LF") ? indFileName[0].substring(2,4) : originalFileName[0].substring(1,3));
-      // processCSV(refPath,originalFileName[0].includes("LF") ? originalFileName[0].substring(2,4) : originalFileName[0].substring(1,3));
+      newIndData = processCSV(refIndPath,indFileName[1]);
+
       // variable for body data
       
       // loop through each line of indirect body and set data or change verbiage
@@ -269,17 +273,13 @@ function processFile(refPath,refIndPath,path,indPaths) {
           indData.fixtureData = line;
         } else if (index === indexIndTrace + 1) {
           indData.wattageData = line;
-        } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 1 || line.split(' ').length === 5 || line.split(' ').length === 16 || line.split(' ').length === 9)) {
+        } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 5 || line.split(' ').length === 16 || line.split(' ').length === 9)) {
           indData.candelaData.splice(0, indData.candelaData.length);
           indData.topAngles = line;
         } else if (index >= indexIndTrace && index < indText.length - 1) {
           indData.candelaData.push(line);
         }
       });
-    }
-
-    if (originalData.topAngles.split(' ').length === 1) {
-      originalText[originalText.length] = (originalData.topAngles.length > indData.topAngles.length ? originalData.topAngles : indData.topAngles) + '\r\n'
     }
     // combines/replaces fixture data to establish combined base file content
     var combFixtureData = originalData.fixtureData.split(' ');
@@ -294,8 +294,10 @@ function processFile(refPath,refIndPath,path,indPaths) {
     // checks if top angle qty is equal, sets the largest qty if not
     var combTopAngles = indPaths.length>0 && originalData.topAngles.length < indData.topAngles.length ? indData.topAngles : originalData.topAngles
     // combines text to establish base file content, common base info (no configuration variables)
+
     var combinedText = originalText.join('\r\n')
       .replace('[TEST]ITL','[TEST]SCALED FROM ITL')
+      .replace('[TEST]','[TEST]SCALED FROM')
       .replace('-GONIOPHOTOMETRY',indPaths.length>0 ? ' & ' + indData.test : '')
       .replace('-GONIOPHOTOMETRY','')
       // .replace('-' + originalFileName[2], '-' + 'test')
@@ -303,12 +305,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
       .replace('[_ABSOLUTELUMENS]','[OTHER]NOTE THIS TEST FILE HAS MULTIPLIER AND/OR WATTAGE ADJUSTMENTS APPLIED FOR CCT, OPTIC OR OUTPUT OPTIONS - CONTACT PINNACLE FACTORY FOR MORE INFORMATION\r\n[_ABSOLUTELUMENS]')
       .replace(originalData.fixtureData, combFixtureData.join(' '))
       .replace(originalData.endAngles, indPaths.length>0 ? biAngles : originalData.endAngles)
-
-      // .replace(originalData.topAngles.length === 1 ? "nothing" : originalData.topAngles, combTopAngles);
-
-    // console.log(originalData.topAngles)
-    // console.log(combTopAngles)
-    
+      .replace(originalData.topAngles, combTopAngles);
     //loops through direct output data to build configs
     Object.keys(newData).forEach((color) => {
       // loops through indirect output data to build configs
@@ -318,51 +315,47 @@ function processFile(refPath,refIndPath,path,indPaths) {
           var indColor = Object.keys(newIndData)[j];
         }
         // ensures only output of common colors is processed
-        if (indPaths.length === 0 || color.substr(0,3) === indColor.substr(0,3)) {
+        if (indPaths.length === 0 || color.substr(0,2) === "TW") {
           // loops through each length to build configs
-          for (var k=0; k<1; k++) {
+          for (var k=0; k<lengths.length - (path.split('-')[0] === "Q3R" ? 2 : 0); k++) {
           // lengths.forEach((length) => {
-            // var length = originalFileName[1].includes('24') ? '24' : lengths[k];
-            // var linLength = length === '24' ? 12 : Number(length.charAt(0)) * (length.length > 1 ? 4 : 1);
+            var length = originalFileName[1].includes('24') ? '24' : lengths[k];
+            var linLength = length === '24' ? 12 : Number(length.charAt(0)) * (length.length > 1 ? 4 : 1);
             // copies variables to avoid base file modification
             var newFixtureData = combFixtureData.join(' ').split( ' ');
             var newWattageData = originalData.wattageData.split( ' ');
              
-            var dirNormalizer = newData[color][0] / Number(originalData.absLumen);
-            // console.log(length)
-            // console.log(color)
-            // console.log(dirNormalizer)
+            var dirNormalizer = (newData[color][0] * Number(linLength)) / Number(originalData.absLumen);
+
             // calculates ratio of direct output to direct abs lumens, normalizer later applied to all indirect data for use in overall file multiplier (IES toolbox)
             if (indPaths.length>0) {
               // var origIndLinLength = indFileName[1].substring(0,2) === '24' ? 12 : Number(indFileName[1].charAt(0)) * 4;
               // var indAbsRatio = newData[indFileName[5].split('.')[0]][0] / (newData[indFileName[4]][0] + newData[indFileName[5].split('.')[0]][0]);
               // var partialAbs = Number(indData.absLumen) * indAbsRatio;
-              // console.log(partialAbs)
-              var indNormalizer = newIndData[indColor][0] / Number(indData.absLumen);
-              // console.log(indColor)
-              // console.log(indNormalizer)
+            
+              var indNormalizer = (newIndData[indColor][0] * Number(linLength)) / Number(indData.absLumen);
+              
               // var indNormalizer = (Number(originalData.absLumen) * (newIndData[indColor][0] * Number(length)) / (newData[color][0] * Number(length))) / (Number(indData.absLumen));
             }
             // calculates configuration specific normalized indirect abs lumens to direct abs lumens per above
             
-            var combAbsLumens = newData[color][0];
+            var combAbsLumens = newData[color][0] * Number(linLength);
             if (indPaths.length>0) {
-              combAbsLumens += newIndData[indColor][0]
+              combAbsLumens += newIndData[indColor][0] * Number(linLength)
             }
             // calculates configuration specific overall file multiplier (IES toolbox) and sets in variable
             newFixtureData[2] = 1;
             // newFixtureData[2] = ((newData[color][0] * Number(length) + newIndData[indColor][0] * Number(length)) / combAbsLumens).toFixed(5);
 
             // calculates configuration specific total wattage and sets in variable
-            var combWattage = newData[color][1];
+            var combWattage = newData[color][1] * Number(linLength);
             if (indPaths.length>0) {
-              combWattage += newIndData[indColor][1]
+              combWattage += newIndData[indColor][1] * Number(linLength)
             }
             newWattageData[2] = combWattage.toFixed(1)
 
             // notes length and width dim location and delta of base files to config length
             // var dimsArray = lengthModifier(newFixtureData, originalFileName[1].substring(0,2), length);
-            // var dimsArray = lengthModifier(newFixtureData, originalFileName[3].substring(0,1), length);
             // var dimsArray = lengthModifier(newFixtureData, originalFileName[3].substring(0,1), length);
             // newFixtureData[dimsArray[(indPaths.length > 0 && indFileName[1] === "WHE" && originalFileName[1] !== "WHE" ? 1 : 0)]] = (Number(combFixtureData[dimsArray[0]]) - dimsArray[2]).toFixed(2);
             // newFixtureData[dimsArray[2]] = (Number(combFixtureData[dimsArray[2]]) - dimsArray[3]).toFixed(2);
@@ -373,28 +366,30 @@ function processFile(refPath,refIndPath,path,indPaths) {
             var indMissingLumenM = 1
 
             if (indPaths.length>0) {
-              if (originalFileName[1] === "AL" || originalFileName[1] === "HED") {
+              // if (originalFileName[1] === "AL" || originalFileName[1] === "BW" || originalFileName[1] === "HE" || originalFileName[1] === "HED" || originalFileName[1] === "WHE") {
+              if (originalFileName[1]) {
                 dirMissingLumenM = missingLumenMult[originalFileName[0]][originalFileName[1]]
               }
-              if (indFileName[1] === "HEA" || indFileName[1] === "BW" || (indFileName[1]==="WHE" && indFileName[0]==="EX4I")) {
+              if (indFileName[1] === "HEA" || indFileName[1] === "BW" || (indFileName[1]==="WHE" && (indFileName[0]==="EX4I" || indFileName[0]==="EX3I" || indFileName[0]==="L6I" || indFileName[0]==="L8I"))) {
                 indMissingLumenM = missingLumenMult[indFileName[0]][indFileName[1]]
               }
             }
+        
 
             var combCandelaData = candelaCombiner(originalData.candelaData, indData.candelaData, dirNormalizer, indNormalizer, dirMissingLumenM, indMissingLumenM);
-            // console.log(combCandelaData)
             // sets base combined file name to be replaced on each config
             var biFileName = path.split('-')[0];
-            // var oldFile = [biFileName,originalFileName[1],originalFileName[2],originalFileName[3].replace('.IES', '')]
-            var oldFile = [biFileName,originalFileName[1],originalFileName[2].replace('.IES', '')]
+            var oldFile = [biFileName,originalFileName[1].replace('.IES', '')]
+            console.log(oldFile)
             // creates new combined file name
             if (indPaths.length>0) {
-              var newFile = [biFileName.replace("D", "DI"),oldFile[1],color,indColor];
-              // var newFile = [biFileName+'I',oldFile[1],indFileName[1],color,indColor,length]
+              // var newFile = [biFileName,length+"DI",oldFile[2],indFileName[2],color,indColor];
+              var newFile = [biFileName+'I',oldFile[1],indFileName[1],color,indColor,length]
             } else {
               // var newFile = [biFileName,length+"D",oldFile[2],color];
-              var newFile = [biFileName,oldFile[1],color]
+              var newFile = [biFileName,color]
             }
+            console.log(newFile)
             // configuration specific file content replacement
             var newText = combinedText
               .replace(oldFile.join('-'), newFile.join('-'))
@@ -404,7 +399,6 @@ function processFile(refPath,refIndPath,path,indPaths) {
             // adds file extension to combined file name
             var newFileName = newFile.join('-') + '.IES';
             // writes each file with content to output dir (if colors match per above)
-
             fs.writeFileSync(outputDir + '/' + newFileName, newText + combCandelaData);
           }
         }
@@ -422,9 +416,7 @@ function lengthModifier(fixArray,origL,newL) {
     lengthDim = widthDim;
     widthDim = tempDim;
   }
-  // console.log(lengthDim)
-  // console.log(widthDim)
-  // console.log(origL)
+
   
   var lDiff = Number(origL.charAt(0)) - Number(newL.charAt(0));
   // var wDiff = Number(origL.charAt(1)) - Number(newL.charAt(1));
@@ -446,12 +438,12 @@ function processCSV(csvPath, shield) {
       if (splitLine[shieldIndex] !== 'N/A') {
         var color = splitLine[0];
         outputObject[color] = [];
-        if (Number(splitLine[shieldIndex+1]) > Number(splitLine[shieldIndex])) {
-          outputObject[color].push(Number(splitLine[shieldIndex+1]));
+        if (Number(splitLine[shieldIndex-1]) > Number(splitLine[shieldIndex])) {
+          outputObject[color].push(Number(splitLine[shieldIndex-1]));
           outputObject[color].push(Number(splitLine[shieldIndex]));
         } else {
           outputObject[color].push(Number(splitLine[shieldIndex]));
-          outputObject[color].push(Number(splitLine[shieldIndex+1]));
+          outputObject[color].push(Number(splitLine[shieldIndex-1]));
         }
       }
     }
@@ -459,11 +451,22 @@ function processCSV(csvPath, shield) {
   return outputObject;
 }
 
-// function for combining direct and indirect candela data and modifying all output data to match file
+// function for combining direct and indirect candela data
 function candelaCombiner(dirArr,indArr, dNorm, iNorm, dRep, iRep) {
+
   // cleans up the lines to remove extraneous spaces and newlines, then removes inverse hemisphere in proud lens applications
   var directC = fixLines(dirArr);
   var indirectC = fixLines(indArr);
+
+  if (directC.length === 9 && indirectC.length === 5) {
+    var revInd = indirectC.slice().reverse().slice(0,-1)
+    indirectC = revInd.concat(indirectC)
+  }
+  
+  if (directC.length === 5 && indirectC.length === 16) {
+    var revDir = directC.slice().reverse().slice(0,-1)
+    directC = revDir.concat(directC)
+  }
 
   // ensures the same number of angle measurements exist by configuration
   if (directC.length < indirectC.length) {
@@ -495,11 +498,13 @@ function candelaCombiner(dirArr,indArr, dNorm, iNorm, dRep, iRep) {
         // }
       // })
       // dirRep = 1 + dirMissing/dirTotal
-      // console.log(dirRep)
     // }
-
     splitD = splitD.map(cand=>{
+      // if (index < 36 && fixtPn.charAt(0)==="E" && fixtPn.split('').pop()==='I') {
+      //   return 0;
+      // } else {
       return (Number(cand)*dNorm*dRep).toFixed(1);
+      // }
     });
 
     let splitI
@@ -518,7 +523,6 @@ function candelaCombiner(dirArr,indArr, dNorm, iNorm, dRep, iRep) {
           // }
         // })
         // indRep += indMissing/indTotal/37
-        // console.log(indRep)
       // }
 
       splitI = splitI.map(cand=>{
@@ -546,7 +550,7 @@ function candelaCombiner(dirArr,indArr, dNorm, iNorm, dRep, iRep) {
 
 // function to clean up the block of candela data, removing extra spaces and newlines
 function fixLines(arr) {
-  if (arr.length !== 5 && arr.length !== 16 && arr.length !== 9 && arr.length !== 1) {
+  if (arr.length !== 5 && arr.length !== 16 && arr.length !== 9 && arr.length !== 11 && arr.length!= 73) {
     var newArray = []
     var start
     arr.forEach((line,index) => {
@@ -605,11 +609,6 @@ function normalizeAngleQty(arr, ref) {
     if (ref===16 && arr.length===5 && ind!==2) {
       stretchedArr.push(elem)
       stretchedArr.push(elem)
-    }
-    if (arr.length===1) {
-      for (var i = 1; i < ref; i++) {
-        stretchedArr.push(elem)
-      }
     }
   })
   return stretchedArr
