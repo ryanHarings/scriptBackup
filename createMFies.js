@@ -182,6 +182,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
   var indexTrace;
   // loop through each line of direct body and set data or change verbiage
   originalText.forEach((line, index) => {
+    
     if (line.includes('[LUMINAIRE]') && (originalFileName[0]==='EX3D' || originalFileName[0]==='EX4D') && indPaths.length>0) {
       while (originalText[index + 1].includes('[MORE]')) {
         originalText.splice(index + 1, 1)
@@ -224,6 +225,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
       originalData.deleteLines.splice(0, originalData.deleteLines.length);
       originalData.topAngles = line;
     } else if (index > indexTrace && index < originalText.length - 1) {
+      // console.log(index,originalText.length,line)
       if(originalFileName[0]==='CU1I' || originalFileName[0]==='CU3I') {
         originalData.candelaData.push(line.split(' ').reverse().join(' '));
       } else {
@@ -307,7 +309,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
 
     var combinedText = originalText.join('\r\n')
       .replace('[TEST]ITL','[TEST]SCALED FROM ITL')
-      .replace('[TEST]','[TEST]SCALED FROM')
+      // .replace('[TEST]','[TEST]SCALED FROM')
       .replace('-GONIOPHOTOMETRY',indPaths.length>0 ? ' & ' + indData.test : '')
       .replace('-GONIOPHOTOMETRY','')
       // .replace('-' + originalFileName[2], '-' + 'test')
@@ -366,7 +368,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
             // notes length and width dim location and delta of base files to config length
             // var dimsArray = lengthModifier(newFixtureData, originalFileName[1].substring(0,2), length);
             var dimsArray = lengthModifier(newFixtureData, originalFileName[3].substring(0,1), length);
-            console.log(newFixtureData)
+
             newFixtureData[dimsArray[(indPaths.length > 0 && indFileName[1] === "WHE" && originalFileName[1] !== "WHE" ? 1 : 0)]] = (Number(combFixtureData[dimsArray[0]]) - dimsArray[2]).toFixed(2);
             // newFixtureData[dimsArray[2]] = (Number(combFixtureData[dimsArray[2]]) - dimsArray[3]).toFixed(2);
             newFixtureData[dimsArray[(indPaths.length > 0 && indFileName[1] === "WHE" && originalFileName[1] !== "WHE" ? 0 : 1)]] = Number(combFixtureData[dimsArray[1]]).toFixed(2);
@@ -461,10 +463,11 @@ function processCSV(csvPath, shield) {
 
 // function for combining direct and indirect candela data
 function candelaCombiner(dirArr,indArr, dNorm, iNorm, dRep, iRep) {
-
+// console.log(dirArr.length)
   // cleans up the lines to remove extraneous spaces and newlines, then removes inverse hemisphere in proud lens applications
   var directC = fixLines(dirArr);
   var indirectC = fixLines(indArr);
+  // console.log(directC)
 
   if (directC.length === 9 && indirectC.length === 5) {
     var revInd = indirectC.slice().reverse().slice(0,-1)
@@ -582,7 +585,6 @@ function fixLines(arr) {
 
 // function to remove the inverse hemisphere candela data for proud lens application
 function removeInvHem(line) {
-  console.log('testies')
   if (line.split(' ').length === 73 && Number(line.split(' ')[0]) > 0) {
     var temp = line.split(' ');
     temp.length = 37;
@@ -635,7 +637,7 @@ function normalizeAngleQty(arr, ref) {
 // function to add the missing candela to remaining candela
 
 function convertAngles(angStr) {
-  console.log(angStr)
+  // console.log(angStr)
   var newAngs = [];
   var angDif = Number(angStr.split(' ').reverse()[0])-Number(angStr.split(' ').reverse()[1])
   console.log(angDif)
@@ -647,6 +649,6 @@ function convertAngles(angStr) {
       newAngs.push(String(Number(newAngs[ind-1])+angDif))
     }
   })
-  console.log(newAngs)
+  // console.log(newAngs)
   return newAngs.join(' ')
 }
