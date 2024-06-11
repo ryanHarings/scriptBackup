@@ -50,6 +50,20 @@ const missingLumenMult = {
   CI: {
     BW: 1 //.603
   },
+  EX1D: {
+    A: 1,
+    BW: 1.0,
+    HE: 1.0,
+    HED: 1.0,
+    P: 1.0,
+    WHE: 1.0
+  },
+  EX1I: {
+    BW: 1.0,
+    HE: 1.0,
+    HEA: 1.0,
+    WHE: 1.0
+  },
   EX2D: {
     A: 1,
     AL: 1.19, // <-whe mult, non-whe -> 1.21,
@@ -115,7 +129,7 @@ function buildTree() {
     entries.forEach((refFile) => {
       const path = Path.join('./', refFile);
       // if (path.match(/\.csv/)) {
-      if (path.match(/MW\.csv/) || path.match(/M\.csv/) || path.match(/D\.csv/)) {
+      if (path.match(/MW\.csv/) || path.match(/M\.csv/) || path.match(/D\.csv/) || path.match(/S3N\.csv/) || path.match(/S3U\.csv/)) {
         refPath = path;
       } else if (path.match(/I\.csv/)) {
         refIndPath = path;
@@ -136,7 +150,7 @@ function buildTree() {
     //loops through all IES files in current directory
     entries.forEach((file) => {
       const path = Path.join('./', file);
-      if ((path.split('-')[0].match(/D/) || (path.split('-')[0].match(/I/) && indPaths.length === 0) || path.split('-')[0].match(/M/)) && (file.match(/\.IES$/) || file.match(/\.ies$/))) {
+      if ((path.split('-')[0].match(/D/) || (path.split('-')[0].match(/I/) && indPaths.length === 0) || path.split('-')[0].match(/M/) || path.split('-')[0].match(/S3/)) && (file.match(/\.IES$/) || file.match(/\.ies$/))) {
         console.log("Direct file: ", path);
         processFile(refPath,refIndPath,path,indPaths);
       }
@@ -285,7 +299,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
           indData.fixtureData = line;
         } else if (index === indexIndTrace + 1) {
           indData.wattageData = line;
-        } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 5 || line.split(' ').length === 16 || line.split(' ').length === 9)) {
+        } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 5 || line.split(' ').length === 16 || line.split(' ').length === 9 || line.split(' ').length === 25)) {
           indData.candelaData.splice(0, indData.candelaData.length);
           indData.topAngles = line;
         } else if (index >= indexIndTrace && index < indText.length - 1) {
@@ -309,9 +323,13 @@ function processFile(refPath,refIndPath,path,indPaths) {
 
     var combinedText = originalText.join('\r\n')
       .replace('[TEST]ITL','[TEST]SCALED FROM ITL')
+      .replace('[TEST]  KPL','[TEST]SCALED FROM KPL')
       // .replace('[TEST]','[TEST]SCALED FROM')
       .replace('-GONIOPHOTOMETRY',indPaths.length>0 ? ' & ' + indData.test : '')
       .replace('-GONIOPHOTOMETRY','')
+      // if(indPaths.length>0) {
+      //   .replace('D Series','DI Series')
+      // }
       // .replace('-' + originalFileName[2], '-' + 'test')
       // .replace('[LAMP]', indPaths.length>0 ? indData.luminaire.join('\r\n') + '\r\n[LAMP]' : '[LAMP]')
       .replace('[_ABSOLUTELUMENS]','[OTHER]NOTE THIS TEST FILE HAS MULTIPLIER AND/OR WATTAGE ADJUSTMENTS APPLIED FOR CCT, OPTIC OR OUTPUT OPTIONS - CONTACT PINNACLE FACTORY FOR MORE INFORMATION\r\n[_ABSOLUTELUMENS]')
@@ -396,12 +414,15 @@ function processFile(refPath,refIndPath,path,indPaths) {
             if (indPaths.length>0) {
               // var newFile = [biFileName,length+"DI",oldFile[2],indFileName[2],color,indColor];
               var newFile = [biFileName+'I',oldFile[1],indFileName[1],color,indColor,length]
+            } else if (biFileName==="S3U" || biFileName==="S3N") {
+              var newFile = [biFileName,color,length]
             } else {
               // var newFile = [biFileName,length+"D",oldFile[2],color];
               var newFile = [biFileName,oldFile[1],color,length]
             }
 
             // configuration specific file content replacement
+            console.log
             var newText = combinedText
               .replace(oldFile.join('-'), newFile.join('-'))
               .replace('[_ABSOLUTELUMENS]' + originalData.absLumen,'[_ABSOLUTELUMENS]' + combAbsLumens.toFixed(0))
@@ -463,11 +484,12 @@ function processCSV(csvPath, shield) {
 
 // function for combining direct and indirect candela data
 function candelaCombiner(dirArr,indArr, dNorm, iNorm, dRep, iRep) {
-// console.log(dirArr.length)
+console.log(dirArr.length)
   // cleans up the lines to remove extraneous spaces and newlines, then removes inverse hemisphere in proud lens applications
   var directC = fixLines(dirArr);
   var indirectC = fixLines(indArr);
-  // console.log(directC)
+  console.log(directC.length)
+  console.log(indirectC.length)
 
   if (directC.length === 9 && indirectC.length === 5) {
     var revInd = indirectC.slice().reverse().slice(0,-1)

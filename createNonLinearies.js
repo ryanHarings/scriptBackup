@@ -115,7 +115,7 @@ function buildTree() {
     entries.forEach((refFile) => {
       const path = Path.join('./', refFile);
       // if (path.match(/\.csv/)) {
-      if (path.match(/A.csv/) || path.match(/D.csv/) || path.match(/LU.csv/)) {
+      if (path.match(/A.csv/) || path.match(/D.csv/) || path.match(/.csv/)) {
         refPath = path;
       } else if (path.match(/I\.csv/)) {
         refIndPath = path;
@@ -136,7 +136,7 @@ function buildTree() {
     //loops through all IES files in current directory
     entries.forEach((file) => {
       const path = Path.join('./', file);
-      if ((path.split('-')[0].match(/D/) || path.split('-')[0].match(/LU/) || (path.split('-')[0].match(/I/) && indPaths.length === 0) || path.split('-')[0].match(/M/)) && (file.match(/\.IES$/) || file.match(/\.ies$/))) {
+      if ((path.split('-')[0].match(/D/) || path.split('-')[0].match(/LU/) || path.split('-')[0].match(/TR/) || (path.split('-')[0].match(/I/) && indPaths.length === 0) || path.split('-')[0].match(/M/)) && (file.match(/\.IES$/) || file.match(/\.ies$/))) {
         console.log("Direct file: ", path);
         processFile(refPath,refIndPath,path,indPaths);
       }
@@ -379,7 +379,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
             var combCandelaData = candelaCombiner(originalData.candelaData, indData.candelaData, dirNormalizer, indNormalizer, dirMissingLumenM, indMissingLumenM);
             // sets base combined file name to be replaced on each config
             var biFileName = path.split('-')[0];
-            var oldFile = [biFileName,originalFileName[1].replace('.IES', '')]
+            var oldFile = [biFileName,originalFileName[1],originalFileName[2].replace('.IES', '')]
             console.log(oldFile)
             // creates new combined file name
             if (indPaths.length>0) {
@@ -387,9 +387,9 @@ function processFile(refPath,refIndPath,path,indPaths) {
               var newFile = [biFileName+'I',oldFile[1],indFileName[1],color,indColor,length]
             } else {
               // var newFile = [biFileName,length+"D",oldFile[2],color];
-              var newFile = [biFileName,color]
+              var newFile = [biFileName,originalFileName[1],color]
             }
-            console.log(newFile)
+
             // configuration specific file content replacement
             var newText = combinedText
               .replace(oldFile.join('-'), newFile.join('-'))
