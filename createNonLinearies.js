@@ -3,7 +3,7 @@ const Path = require('path');
 
 // const lengths = ['22','44','11','33'];
 const lengths = ['1']
-// const lengths = ['2','3','4']
+// const lengths = ['2','3']
 
 const biAngles = '0 2.5 5 7.5 10 12.5 15 17.5 20 22.5 25 27.5 30 32.5 35 37.5 40 42.5 45 47.5 50 52.5 55 57.5 60 62.5 65 67.5 70 72.5 75 77.5 80 82.5 85 87.5 90 92.5 95 97.5 100 102.5 105 107.5 110 112.5 115 117.5 120 122.5 125 127.5 130 132.5 135 137.5 140 142.5 145 147.5 150 152.5 155 157.5 160 162.5 165 167.5 170 172.5 175 177.5 180'
 
@@ -136,7 +136,7 @@ function buildTree() {
     //loops through all IES files in current directory
     entries.forEach((file) => {
       const path = Path.join('./', file);
-      if ((path.split('-')[0].match(/D/) || path.split('-')[0].match(/LU/) || path.split('-')[0].match(/TR/) || (path.split('-')[0].match(/I/) && indPaths.length === 0) || path.split('-')[0].match(/M/)) && (file.match(/\.IES$/) || file.match(/\.ies$/))) {
+      if ((path.split('-')[0].match(/D/) || path.split('-')[0].match(/LU/) || path.split('-')[0].match(/TR/) || path.split('-')[0].match(/CJ/) || (path.split('-')[0].match(/I/) && indPaths.length === 0) || path.split('-')[0].match(/M/)) && (file.match(/\.IES$/) || file.match(/\.ies$/))) {
         console.log("Direct file: ", path);
         processFile(refPath,refIndPath,path,indPaths);
       }
@@ -215,7 +215,7 @@ function processFile(refPath,refIndPath,path,indPaths) {
         originalText.splice(index + 1, 1)
       } 
       originalText[index] = originalData.endAngles
-    } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 5 || line.split(' ').length === 16 || line.split(' ').length === 9 || line.split(' ').length === 11 || line.split(' ').length === 73)) {
+    } else if (line.split(' ')[0] === '0' && (line.split(' ').length === 5 || line.split(' ').length === 9 || line.split(' ').length === 11 || line.split(' ').length === 16 || line.split(' ').length === 25 || line.split(' ').length === 73)) {
       originalData.candelaData.splice(0, originalData.candelaData.length);
       originalData.deleteLines.splice(0, originalData.deleteLines.length);
       originalData.topAngles = line;
@@ -380,13 +380,18 @@ function processFile(refPath,refIndPath,path,indPaths) {
             // sets base combined file name to be replaced on each config
             var biFileName = path.split('-')[0];
             var oldFile = [biFileName,originalFileName[1],originalFileName[2].replace('.IES', '')]
-            console.log(oldFile)
+            // console.log(oldFile)
             // creates new combined file name
             if (indPaths.length>0) {
               // var newFile = [biFileName,length+"DI",oldFile[2],indFileName[2],color,indColor];
               var newFile = [biFileName+'I',oldFile[1],indFileName[1],color,indColor,length]
+            } else if (biFileName === 'CDF') {
+              var newFile = [biFileName,'N',color,length]
+              console.log(newFile)
+
             } else {
               // var newFile = [biFileName,length+"D",oldFile[2],color];
+              
               var newFile = [biFileName,originalFileName[1],color]
             }
 
@@ -550,7 +555,7 @@ function candelaCombiner(dirArr,indArr, dNorm, iNorm, dRep, iRep) {
 
 // function to clean up the block of candela data, removing extra spaces and newlines
 function fixLines(arr) {
-  if (arr.length !== 5 && arr.length !== 16 && arr.length !== 9 && arr.length !== 11 && arr.length!= 73) {
+  if (arr.length !== 5 && arr.length !== 9 && arr.length !== 11 && arr.length !== 16 && arr.length !== 25 && arr.length!= 73) {
     var newArray = []
     var start
     arr.forEach((line,index) => {

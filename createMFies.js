@@ -2,8 +2,8 @@ const fs = require('fs');
 const Path = require('path');
 
 // const lengths = ['22','44','11','33'];
-// const lengths = ['4']
-const lengths = ['2','3','4']
+const lengths = ['2', '3']
+// const lengths = ['2','3','4']
 
 const biAngles = '0 2.5 5 7.5 10 12.5 15 17.5 20 22.5 25 27.5 30 32.5 35 37.5 40 42.5 45 47.5 50 52.5 55 57.5 60 62.5 65 67.5 70 72.5 75 77.5 80 82.5 85 87.5 90 92.5 95 97.5 100 102.5 105 107.5 110 112.5 115 117.5 120 122.5 125 127.5 130 132.5 135 137.5 140 142.5 145 147.5 150 152.5 155 157.5 160 162.5 165 167.5 170 172.5 175 177.5 180'
 
@@ -49,6 +49,9 @@ const missingLumenMult = {
   },
   CI: {
     BW: 1 //.603
+  },
+  CDIF: {
+    A: 1.0
   },
   EX1D: {
     A: 1,
@@ -129,9 +132,9 @@ function buildTree() {
     entries.forEach((refFile) => {
       const path = Path.join('./', refFile);
       // if (path.match(/\.csv/)) {
-      if (path.match(/MW\.csv/) || path.match(/M\.csv/) || path.match(/D\.csv/) || path.match(/S3N\.csv/) || path.match(/S3U\.csv/)) {
+      if (path.match(/MW\.csv/) || path.match(/M\.csv/) || path.match(/D\.csv/) || path.match(/S3N\.csv/) || path.match(/S3U\.csv/) || path.match(/CDF\.csv/) || path.match(/CDIF\.csv/)) {
         refPath = path;
-      } else if (path.match(/I\.csv/)) {
+      } else if (path.match(/I\.csv/) || path.match(/CDI\.csv/)) {
         refIndPath = path;
       } else if ((path.match(/\.IES$/) || path.match(/\.ies$/)) && originalFileCheck(path) && path.split('-')[0].match(/I/)) {
         indPaths.push(path)
@@ -408,23 +411,32 @@ function processFile(refPath,refIndPath,path,indPaths) {
             var combCandelaData = candelaCombiner(originalData.candelaData, indData.candelaData, dirNormalizer, indNormalizer, dirMissingLumenM, indMissingLumenM);
             // sets base combined file name to be replaced on each config
             var biFileName = path.split('-')[0];
-            var oldFile = [biFileName,originalFileName[1],originalFileName[2],originalFileName[3].replace('.IES', '')]
-
+            console.log(biFileName)
+            if (biFileName==="CDF") {
+              var oldFile = [biFileName,originalFileName[2],originalFileName[3].replace('.IES', '')]
+            } else if (biFileName==="CDIF") {
+              var oldFile = [biFileName,originalFileName[1],originalFileName[2],originalFileName[3].replace('.IES', '')]
+            } else {
+              var oldFile = [biFileName,originalFileName[1],originalFileName[2],originalFileName[3].replace('.IES', '')]
+            }
             // creates new combined file name
-            if (indPaths.length>0) {
+            if (indPaths.length>0 && biFileName!=="CDIF") {
               // var newFile = [biFileName,length+"DI",oldFile[2],indFileName[2],color,indColor];
               var newFile = [biFileName+'I',oldFile[1],indFileName[1],color,indColor,length]
             } else if (biFileName==="S3U" || biFileName==="S3N") {
               var newFile = [biFileName,color,length]
+            } else if (biFileName==="CDF") {
+              var newFile = [biFileName,"N",color,length]
+            } else if (biFileName==="CDIF") {
+              var newFile = [biFileName,"BW",color,indColor,length]
             } else {
               // var newFile = [biFileName,length+"D",oldFile[2],color];
               var newFile = [biFileName,oldFile[1],color,length]
             }
 
             // configuration specific file content replacement
-            console.log
             var newText = combinedText
-              .replace(oldFile.join('-'), newFile.join('-'))
+              .replace(oldFile.join('-'), (biFileName==="CDF" || biFileName==="CDIF") ? newFile.join('-').concat('-----REFER TO IES FILE INSTRUCTIONS FOR X OR Y FORM IN ZIP FOLDER-----') : newFile.join('-'))
               .replace('[_ABSOLUTELUMENS]' + originalData.absLumen,'[_ABSOLUTELUMENS]' + combAbsLumens.toFixed(0))
               .replace(combFixtureData.join(' '), newFixtureData.join(' '))
               .replace(originalData.wattageData, newWattageData.join(' '))

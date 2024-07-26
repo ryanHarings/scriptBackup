@@ -3,7 +3,7 @@ const Path = require('path');
 
 // const lengths = ['22','44','11','33'];
 // const lengths = ['3']
-const lengths = ['2','4']
+const lengths = ['2','3']
 
 const biAngles = '0 2.5 5 7.5 10 12.5 15 17.5 20 22.5 25 27.5 30 32.5 35 37.5 40 42.5 45 47.5 50 52.5 55 57.5 60 62.5 65 67.5 70 72.5 75 77.5 80 82.5 85 87.5 90 92.5 95 97.5 100 102.5 105 107.5 110 112.5 115 117.5 120 122.5 125 127.5 130 132.5 135 137.5 140 142.5 145 147.5 150 152.5 155 157.5 160 162.5 165 167.5 170 172.5 175 177.5 180'
 
@@ -14,7 +14,13 @@ const noteBody = {
   },
   CRD: {
     d: '[LUMINAIRE]FABRICATED WHITE PAINTED METAL HOUSING WITH EXTRUDED WHITE PAINTED\r\n[MORE]METAL END CAPS AND RAILS. OPTICAL COMPARTMENT CONSISTS OF: FORMED WHITE\r\n[MORE]TEXTURED PLASTIC REFLECTOR WITH TEXTURED CLEAR LENS ABOVE LEDS, CIRCUIT\r\n[MORE]BOARDS EACH WITH 60 OR 120 LEDS. OPEN BOTTOM. LENS FROSTED BOTH SIDES'
-  }
+  },
+  CDF: {
+    d: '[LUMINAIRE]EXTRUDED WHITE PAINTED METAL HOUSING WITH CAST WHITE PAINTED METAL\r\n[MORE]END CAPS. OPTICAL COMPARTMENT CONSISTS OF: FORMED WHITE TEXTURED PLASTIC\r\n[MORE]REFLECTOR WITH TEXTURED CLEAR LENS ABOVE LEDS, CIRCUIT BOARDS EACH WITH\r\n[MORE]120 LEDS. OPEN BOTTOM AND ENDS. LENS FROSTED BOTH SIDES.'
+    },
+  CDIF: {
+    di: '[LUMINAIRE]EXTRUDED WHITE PAINTED METAL HOUSING WITH CAST WHITE PAINTED\r\n[MORE]END CAPS AND 2 DISTINCT OPTICAL COMPARTMENTS, TOP OPTICAL COMPARTMENT\r\n[MORE]CONSISTS OF: FABRICATED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD\r\n[MORE]MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36 LEDS, FROSTED LINEAR PRISMATIC\r\n[MORE]PLASTIC LENS. BOTTOM OPTICAL COMPARTMENT CONSISTS OF: FORMED WHITE\r\n[MORE]TEXTURED PLASTIC REFLECTOR WITH TEXTURED CLEAR LENS ABOVE LEDS, CIRCUIT\r\n[MORE]BOARDS EACH WITH 120 LEDS. OPEN BOTTOM AND ENDS. LENS FROSTED BOTH SIDES.'
+  },
 }
 //   Q3S: {
 //     d: '[LUMINAIRE]HOUSING WITH WHITE PAINTED GENERAL INTERIOR FINISH AND A FABRICATED\r\n[MORE]METAL TOP HOUSING, FORMED WHITE PAINTED METAL REFLECTOR/CIRCUIT BOARD\r\n[MORE]MOUNT, WHITE CIRCUIT BOARDS EACH WITH 36 LEDS, EXTRUDED CLEAR FROSTED\r\n[MORE]FLAT PLASTIC LENS. LENSES FROSTED BOTH SIDES. OPEN CENTER.',
@@ -96,9 +102,9 @@ function buildTree() {
     entries.forEach((refFile) => {
       const path = Path.join('./', refFile);
       // if (path.match(/\.csv/)) {
-      if (path.match(/CD\.csv/)) {
+      if (path.match(/CDF\.csv/)) {
         refPath = path;
-      } else if (path.match(/CI\.csv/)) {
+      } else if (path.match(/CDIF\.csv/)) {
         refIndPath = path;
       } else if ((path.match(/\.IES$/) || path.match(/\.ies$/)) && originalFileCheck(path) && path.split('-')[0].match(/I/)) {
         indPaths.push(path)
@@ -368,10 +374,10 @@ function processFile(refPath,refIndPath,path,indPaths) {
             // creates new combined file name
             if (indPaths.length>0) {
               // var newFile = [biFileName,length+"DI",oldFile[2],indFileName[2],color,indColor];
-              var newFile = [biFileName+'I',indFileName[2],color,indColor,length]
+              var newFile = [biFileName+'I',indFileName[2],color,indColor,length,'----REFER TO IES FILE INSTRUCTIONS FOR X OR Y FORM IN ZIP FOLDER-----']
             } else {
               // var newFile = [biFileName,length+"D",oldFile[2],color];
-              var newFile = [biFileName,color,length]
+              var newFile = [biFileName,color,length,'----REFER TO IES FILE INSTRUCTIONS FOR X OR Y FORM IN ZIP FOLDER-----']
             }
             // configuration specific file content replacement
             var newText = combinedText
